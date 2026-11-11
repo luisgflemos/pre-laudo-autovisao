@@ -2,6 +2,24 @@
 import json
 from datetime import datetime,timezone
 
+EMPRESAS_INICIAIS = (
+ ('5294', 'Unidade Andrade Neves', 'UNIDADE'),
+ ('5295', 'Unidade Imperatriz', 'UNIDADE'),
+ ('5296', 'Unidade Abolição', 'UNIDADE'),
+ ('5297', 'Unidade Domicio Pacheco', 'UNIDADE'),
+ ('5299', 'Unidade Amoreiras', 'UNIDADE'),
+ ('5300', 'Consolidadora', 'CONSOLIDADORA'),
+)
+
+def carregar_cadastro_inicial(con):
+ if cached(con) is not None:
+  return
+ rows = [
+  {'erp_id': erp_id, 'nome': nome, 'papel': papel, 'ativa_operacional': papel == 'UNIDADE'}
+  for erp_id, nome, papel in EMPRESAS_INICIAIS
+ ]
+ apply(con, rows)
+
 def init(con):
  con.execute('CREATE TABLE IF NOT EXISTS erp_empresas(erp_id TEXT PRIMARY KEY, nome TEXT NOT NULL, ativa_operacional INTEGER NOT NULL CHECK(ativa_operacional IN (0,1)), papel TEXT NOT NULL, data_json TEXT NOT NULL)')
  con.execute('CREATE TABLE IF NOT EXISTS erp_empresas_estado(id INTEGER PRIMARY KEY CHECK(id=1), data_json TEXT NOT NULL)')

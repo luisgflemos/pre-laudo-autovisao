@@ -1416,6 +1416,9 @@ def main(on_ready=None):
         raise
     try:
         init_db()
+        with db() as con:
+            con.execute("BEGIN IMMEDIATE")
+            empresas_erp.carregar_cadastro_inicial(con)
         ensure_initial_admin()
     except Exception:
         http.server_close()
