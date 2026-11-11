@@ -1,0 +1,27 @@
+@import url('./vistoriador_ajustes.css');
+@import url('./interface_compartilhada.css');
+/* Vistoriador: cartões e hierarquia da administração, com densidade operacional. */
+.operator-brand{border-top-color:var(--av-red-deep)}
+#flow{padding:14px 16px 0;background:white;border:1px solid var(--ui-line);border-radius:12px;box-shadow:0 2px 8px #1e293b04}
+#title{border-left:3px solid var(--av-red-deep);padding-left:10px;font-size:21px;margin:4px 0 5px}
+.operator-step-help{color:var(--ui-muted);margin-bottom:10px}
+.card,#who,.pay-part,#prices,#summary{border-color:var(--ui-line);border-radius:10px;box-shadow:0 2px 8px #1e293b04}
+.document-card{background:var(--ui-soft);border:1px solid #e0e7f0;box-shadow:none}
+.document-card>p,.muted,small,.optional-mark{color:var(--ui-muted)}
+#chosen,#clientbanner{background:#fff4f6;border:1px solid var(--ui-selected-line);border-left:3px solid var(--av-red-deep);box-shadow:none}
+#bannername,#chosen>b{color:#7b2435}
+#bannerstatus{background:white!important;border-color:var(--ui-selected-line)!important}
+.step-progress li{background:var(--ui-soft);border-color:var(--ui-line);color:var(--ui-muted)}
+.step-progress li.is-current{background:var(--ui-selected);border-color:var(--ui-selected-line);color:var(--av-red-deep)}
+.step-progress li.is-done{background:#edf1f6;border-color:#d4dbe4}
+.choice{border-color:#d4dbe4}.choice.on{background:var(--ui-selected);border-color:var(--av-red-deep);color:var(--av-red-deep)}
+#s3>.row{gap:8px;margin-bottom:10px}#s3>label{margin-top:10px}
+#servicelist{background:white;padding:5px 10px}.check{border-bottom-color:var(--ui-line);padding:8px 2px}.check:hover{background:var(--ui-soft)}
+#flow .sticky{background:#fffffffa;border-top:1px solid var(--ui-line);padding:8px 0;backdrop-filter:blur(8px)}
+.proof-read-box,#summary>details>summary{background:var(--ui-soft);border-color:#e0e7f0}
+.financial-heading{background:var(--ui-soft);color:var(--av-graphite);border-bottom:1px solid var(--ui-line);border-left:4px solid var(--av-red-deep)}
+.financial-cell:first-child{background:var(--ui-soft)}.financial-cell,.financial-grid,.financial-state{border-color:var(--ui-line)}
+.financial-state.is-difference{background:#fcf0f2;border-left-color:var(--av-red-deep);color:var(--av-red-deep)}
+.financial-state.is-balanced,.financial-state.is-pending{background:var(--ui-soft)}
+.operator-validation{border-color:var(--ui-line);border-top-color:var(--av-red-deep)}
+@media(max-width:600px){#flow{padding:11px 10px 0;border-radius:10px}.wrap{padding-left:10px;padding-right:10px}#title{font-size:20px}.operator-form-grid{gap:8px}#clientbanner{padding:8px 10px}.document-card{padding:8px 10px}}

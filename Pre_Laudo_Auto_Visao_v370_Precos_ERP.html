@@ -1,0 +1,1662 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pré-Laudo Auto Visão v3.7.0</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f4f4;margin:0;color:#171717}.wrap{max-width:560px;margin:auto;padding:16px}.card{background:#fff;border:1px solid #ddd;border-radius:14px;padding:14px;margin:10px 0}h1{font-size:22px;margin:0 0 4px}label{display:block;font-weight:700;font-size:13px;margin:12px 0 5px}input,select,button{box-sizing:border-box;width:100%;min-height:48px;border:1px solid #bbb;border-radius:10px;padding:10px;font-size:16px}button{font-weight:700;cursor:pointer}.primary{background:#c91520;color:#fff;border:0}.row{display:flex;gap:8px}.row>*{flex:1}.hidden{display:none!important}.muted{color:#666}.result{background:#fff;text-align:left;border:0;border-bottom:1px solid #ddd;border-radius:0;padding:11px 5px}.choice.on{outline:2px solid #c91520;background:#fff3f3}.check{display:flex;gap:10px;align-items:flex-start;padding:10px 4px;border-bottom:1px solid #eee}.check input[type="checkbox"],.check input[type="radio"]{width:22px;min-height:22px;margin:2px 0}.pill{font-size:11px;border:1px solid #bbb;border-radius:20px;padding:2px 7px}.sticky{position:sticky;bottom:0;background:#f4f4f4;padding-top:8px}
+.badprice{color:#a40000} button:disabled{opacity:.45;cursor:not-allowed}
+.pay-proof-actions{display:flex;gap:10px;flex:1;min-width:320px}
+.pay-proof-actions .pay-proof-btn{flex:1;display:flex;align-items:center;justify-content:center;min-height:54px;cursor:pointer}
+
+.proof-read-box{width:100%;margin-top:8px;padding:10px 12px;border-radius:10px;background:#f6f7f8;border:1px solid #d8dde2;font-size:13px;line-height:1.55}.proof-read-box b{font-weight:800}
+
+.os-meta-header{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 10px;font-size:12px;color:#5d636b}
+.os-meta-label{font-weight:700}.os-meta-value{font-weight:800;color:#222;background:#f3f4f5;border:1px solid #d8dde2;border-radius:8px;padding:5px 8px}
+@media(max-width:650px){.os-meta-header{justify-content:flex-start;flex-wrap:wrap}}
+</style><script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js">
+
+
+</script><script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs" type="module"></script>
+<script type="module">
+import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+window.pdfjsLib=pdfjsLib;
+</script>
+<style id="crlv-visual-only">
+#crlvOcrCard > div:first-child{
+  display:flex;
+  gap:10px;
+  flex-wrap:nowrap;
+}
+#crlvOcrCard > div:first-child > label{
+  flex:1 1 0;
+  min-height:56px;
+  border:1px solid #b8b8b8;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  cursor:pointer;
+  font-weight:700;
+  background:#fff;
+}
+</style>
+
+
+<style id="service-search-clear-style">
+.search-clear-wrap{position:relative;width:100%}
+.search-clear-wrap #serviceq{width:100%;box-sizing:border-box;padding-right:42px}
+.search-clear-x{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  width:28px;height:28px;border:0;background:transparent;
+  font-size:24px;line-height:28px;font-weight:700;cursor:pointer;
+  opacity:.65;padding:0
+}
+.search-clear-x:hover{opacity:1}
+</style>
+
+
+<style id="split-payment-layout-v313">
+#paymentParts{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.pay-part{
+  display:grid;
+  grid-template-columns:minmax(190px,1.35fr) minmax(130px,.65fr) 42px;
+  gap:12px;align-items:end;
+  padding:12px;border:1px solid #ddd;border-radius:12px;background:#fff
+}
+.pay-part label{display:block;margin:0 0 5px;font-size:13px;font-weight:700}
+.pay-part select,.pay-part input[type="text"]{
+  width:100%;height:46px;box-sizing:border-box;margin:0
+}
+.pay-remove{
+  width:36px;height:36px;min-width:36px;padding:0;margin:0 0 5px;
+  border:1px solid #d6d6d6;border-radius:9px;background:#fff;
+  font-size:18px;font-weight:700;line-height:1;cursor:pointer
+}
+.pay-proof{
+  grid-column:1 / -1;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding-top:2px
+}
+.pay-proof-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;padding:8px 14px;border:1px solid #cfcfcf;
+  border-radius:9px;background:#fff;font-weight:700;cursor:pointer
+}
+.pay-proof-status{font-size:13px}
+.pay-proof-status.ok{color:#176b2c;font-weight:700}
+.pay-proof-status.pending{color:#9a6400;font-weight:700}
+.pay-cash-note{font-size:13px;color:#9a6400;font-weight:700}
+@media(max-width:650px){
+  .pay-part{grid-template-columns:minmax(0,1fr) 120px 38px;gap:8px;padding:10px}
+}
+</style>
+
+<style id="hide-global-proof-v313">
+#payarea > label[for="proof"], #payarea > #proof, #payarea > #proofname {display:none!important}
+</style>
+
+<style id="proof-validation-v343">
+.proof-validation{margin-top:10px;padding-top:10px;border-top:1px solid #d7dde5;display:grid;gap:6px}
+.proof-validation-title{font-weight:800;margin-bottom:2px}
+.proof-check{display:flex;align-items:center;gap:8px;font-size:14px}
+.proof-dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex:0 0 12px}
+.proof-dot.green{background:#18a34a}.proof-dot.yellow{background:#eab308}
+.proof-admin-review{margin-top:8px;padding:8px 10px;border-radius:8px;background:#fff7d6;border:1px solid #eab308;color:#8a5a00;font-weight:800}
+</style>
+<link rel="stylesheet" href="vistoriador_padrao.css"><script src="precos_compartilhados.js"></script></head><body><div class="wrap"><div class="operator-brand"><div><strong>PRÉ-LAUDO</strong><br><span>Auto Visão · Operação</span></div><span class="app-badge">Aplicação do vistoriador</span></div>
+<div id="osMetaHeader" class="os-meta-header">
+<span class="os-meta-label">Data/Hora de abertura da OS</span>
+<span id="osOpenedAtDisplay" class="os-meta-value">—</span>
+</div>
+<section id="config"><h1>Pré-Laudo Auto Visão</h1><div class="muted">Acesso do vistoriador</div><div class="card"><label for="loginUser">Usuário</label><input id="loginUser" autocomplete="username" autocapitalize="none" placeholder="Seu login"><label for="loginPass">Senha</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="Sua senha"><button class="primary" id="loginButton" type="button">ENTRAR</button><div id="loginMessage" class="muted" role="status" style="margin-top:10px"></div></div><div style="display:none"><select id="unit"></select><select id="insp"></select><button id="activate" type="button"></button><small id="counts"></small></div></section>
+<section id="home" class="hidden"><div id="who"></div><button class="primary" id="new">+ NOVA OS</button><div class="card"><b>Pendências de comprovante</b><div id="pend">0</div></div><div id="history"></div><div class="card" style="margin-top:18px"><b>Administração — Dinheiro pendente</b><div class="muted">Validação exclusiva da Administração.</div><div id="cashAdminQueue" style="margin-top:10px"></div></div></section>
+<section id="flow" class="hidden"><ol class="step-progress" aria-label="Etapas da ordem de serviço"><li data-progress-step="1"><span class="step-number">1</span>Cliente</li><li data-progress-step="2"><span class="step-number">2</span>Veículo</li><li data-progress-step="3"><span class="step-number">3</span>Serviços</li><li data-progress-step="4"><span class="step-number">4</span>Pagamento</li></ol><h1 id="title"></h1><p class="operator-step-help">Os campos com asterisco são obrigatórios para esta OS.</p>
+<div id="clientbanner" class="card hidden" style="position:sticky;top:6px;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+  <div id="bannername" style="font-weight:800;font-size:16px"></div>
+  <div id="bannerstatus" style="display:inline-block;margin-top:6px;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800"></div>
+</div>
+<div id="s1"><label for="q" data-operator-field="q">Cliente</label><input id="q" autocomplete="off" placeholder="Busque por nome fantasia ou razão social..."><div id="results" class="card hidden"></div><div id="chosen" class="card hidden"></div><div class="card document-card" id="cnhDocumentCard"><h2 id="cnhDocumentTitle">CNH</h2><p>Carteira Nacional de Habilitação do condutor.</p><div class="row">
+<label style="margin:0"><span style="display:block;text-align:center;border:1px solid #bbb;border-radius:10px;padding:13px;font-weight:700;cursor:pointer">Tirar foto</span><input id="cnhcam" type="file" accept="image/*" capture="environment" class="hidden"></label>
+<label style="margin:0"><span style="display:block;text-align:center;border:1px solid #bbb;border-radius:10px;padding:13px;font-weight:700;cursor:pointer">Anexar</span><input id="cnhfile" type="file" accept="image/*,application/pdf" class="hidden"></label>
+</div><div id="cnhpreview" class="hidden" style="margin-top:10px"><img style="max-width:100%;max-height:180px;border-radius:10px"><div id="cnhfilename" class="muted"></div><div style="font-weight:700;color:#176b2c;margin-top:4px">✓ ARQUIVO RECEBIDO</div></div><div id="cnhstatus" class="hidden card"></div></div><div class="operator-form-grid"><div class="operator-field operator-field-wide"><label for="driver" data-operator-field="driver">Nome do condutor</label><input id="driver"></div><div class="operator-field"><label for="cpf" data-operator-field="cpf">CPF</label><input id="cpf" inputmode="numeric"></div><div class="operator-field"><label for="email" data-operator-field="email">E-mail</label><input id="email" type="email"></div><div class="operator-field"><label for="phone" data-operator-field="phone">Celular</label><input id="phone" inputmode="tel" maxlength="15" placeholder="(19) 99999-9999"></div></div></div>
+<div id="s2" class="hidden"><div class="card document-card" id="crlvDocumentCard"><h2 id="crlvDocumentTitle">CRLV</h2><p>Certificado de Registro e Licenciamento do Veículo.</p>
+
+<div id="platepreview" class="hidden" style="margin-top:10px"><img style="max-width:100%;max-height:180px;border-radius:10px"><div class="muted">Foto recebida. Confirme/corrija a placa abaixo.</div></div><div id="crlvOcrCard" style="margin:10px 0 14px">
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <label class="btn" style="flex:1;text-align:center">Tirar foto
+      <input id="crlvcam" type="file" accept="image/*" capture="environment" hidden>
+    </label>
+    <label class="btn" style="flex:1;text-align:center">Anexar
+      <input id="crlvfile" type="file" accept="image/*,application/pdf,.pdf" hidden>
+    </label>
+  </div>
+  <div id="crlvstatus" class="hidden" style="margin-top:10px"></div>
+</div></div>
+
+<div class="operator-form-grid"><div class="operator-field"><label for="plate" data-operator-field="plate">Placa</label>
+
+<input id="plate" maxlength="7"></div><div class="operator-field"><label for="brandModel" data-operator-field="brandModel">Marca / Modelo</label><input id="brandModel" autocomplete="off" placeholder="Marca / Modelo"></div></div><div id="legacyVehicleSelectors" style="display:none"><label>Marca *</label><input id="brandq" autocomplete="off" placeholder="Digite para buscar marca..."><div id="brandresults" class="card hidden"></div><div id="brandchosen" class="card hidden"></div><label>Modelo *</label><input id="modelq" autocomplete="off" disabled placeholder="Selecione a marca primeiro"><div id="modelresults" class="card hidden"></div><div id="modelchosen" class="card hidden"></div></div></div>
+<div id="s3" class="hidden"><label>Vistoria *</label><div class="row"><button class="choice on" data-loc="Base">Base</button><button class="choice" data-loc="Móvel">Móvel</button></div><label>Serviço *</label><div class="row"><button class="choice on" data-kind="Individual">Individual</button><button class="choice" data-kind="KIT">KIT</button></div><label>Buscar serviços</label><div class="search-clear-wrap"><input id="serviceq" autocomplete="off" placeholder="Digite para buscar serviços..."><button type="button" id="clearServiceSearch" class="search-clear-x" aria-label="Limpar pesquisa" title="Limpar pesquisa">×</button></div><div id="servicelist" class="card"></div><div id="selectedbox" class="card hidden"><b>Serviços selecionados — <span id="selectedcount">0</span></b><div id="selectedlist"></div></div><div class="card document-card" id="requestDocumentCard"><h2 id="requestDocumentTitle">Requisição do cliente</h2><p>Solicitação de vistoria emitida pelo cliente selecionado.</p>
+<div class="row">
+  <button type="button" class="choice" onclick="document.getElementById('oscam').click()">Tirar foto</button>
+  <button type="button" class="choice" onclick="document.getElementById('osfile').click()">Anexar</button>
+</div>
+<input id="oscam" type="file" accept="image/*" capture="environment" onchange="requestFileSelected(this)" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+<input id="osfile" type="file" accept="image/*,application/pdf,.pdf" onchange="requestFileSelected(this)" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+<div id="ospreview" class="hidden" style="margin-top:10px">
+  <img style="max-width:100%;max-height:180px;border-radius:10px">
+  <div id="osfilename" class="muted"></div>
+</div>
+<div id="reqstatus" class="hidden" style="margin-top:10px"></div>
+<label for="clientos" data-operator-field="clientos">Nº da Requisição</label><input id="clientos" inputmode="numeric" autocomplete="off" placeholder="Número da requisição">
+</div></div>
+<div id="s4" class="hidden"><div id="payrule" class="card"></div>
+<div id="paymentStatusCard" class="card" style="margin-top:10px">
+  <b>Status do pagamento</b><br>
+  <span id="paymentStatusBadge" style="display:inline-block;margin-top:7px;padding:5px 10px;border-radius:999px;font-weight:800">NÃO PAGO</span>
+</div>
+<div id="osPayChoice" class="card hidden" style="margin-top:10px">
+<b>Condição desta OS</b>
+<div class="row" style="margin-top:8px">
+<button type="button" id="chooseInvoice" class="choice">Faturar</button>
+<button type="button" id="chooseCash" class="choice">Pagar à vista</button>
+</div>
+<div id="osPayHint" class="muted"></div>
+</div><div id="prices" class="hidden"><b>Valores da OS</b><div id="pricerows"></div><div class="card"><b>Total: <span id="total">R$ 0,00</span></b></div></div>
+<div id="payarea" class="hidden"><label>Condições de pagamento *</label><div id="paymentParts"></div><button type="button" id="addPaymentPart" class="choice" style="margin:8px 0" onclick="addPaymentPart()">+ Adicionar forma de pagamento</button><div id="paymentDistribution" class="card" style="margin:8px 0"></div></div><div id="summary" class="card"></div></div>
+<div class="row sticky"><button id="back">Voltar</button><button class="primary" id="next">Continuar</button></div><div id="msg" class="muted"></div></section>
+</div><script>
+const API_BASE=location.protocol==='file:'?'http://127.0.0.1:8765':location.origin;
+var systemConfig=null;
+let osOpenedAt=null;
+function formatOSDateTime(date){
+  if(!date)return '—';
+  var p=function(n){return String(n).padStart(2,'0')};
+  return p(date.getDate())+'/'+p(date.getMonth()+1)+'/'+date.getFullYear()+' '+p(date.getHours())+':'+p(date.getMinutes())+':'+p(date.getSeconds());
+}
+function setOSOpenedAtNow(){
+  osOpenedAt=new Date();
+  var el=document.getElementById('osOpenedAtDisplay');
+  if(el)el.textContent=formatOSDateTime(osOpenedAt);
+}
+function ensureOSOpenedAt(){
+  if(!osOpenedAt)setOSOpenedAtNow();
+  var el=document.getElementById('osOpenedAtDisplay');
+  if(el&&osOpenedAt)el.textContent=formatOSDateTime(osOpenedAt);
+}
+
+const D={"clients": [], "inspectors": [], "units": [], "services": [], "models": {"AGRALE": ["MARRUÁ"], "ALFA ROMEO": ["145", "147", "156", "159", "GIULIA", "STELVIO"], "AUDI": ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q3", "Q5", "Q7", "Q8", "E-TRON", "Q4 E-TRON", "Q6 E-TRON", "RS3", "RS4", "RS5", "RS6", "TT"], "BMW": ["SÉRIE 1", "SÉRIE 2", "SÉRIE 3", "SÉRIE 4", "SÉRIE 5", "SÉRIE 7", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "IX", "I3", "I4", "I5", "I7", "Z4"], "BYD": ["DOLPHIN", "DOLPHIN MINI", "DOLPHIN GS", "KING", "SEAL", "SONG PLUS", "SONG PRO", "YUAN PLUS", "YUAN PRO", "TAN", "HAN", "SHARK"], "CAOA CHERY": ["ARRIZO 5", "ARRIZO 6", "TIGGO 2", "TIGGO 3X", "TIGGO 5X", "TIGGO 7", "TIGGO 8"], "CHEVROLET": ["AGILE", "ASTRA", "BLAZER", "CAMARO", "CAPTIVA", "CELTA", "CLASSIC", "COBALT", "CORSA", "CRUZE", "EQUINOX", "JOY", "MERIVA", "MONTANA", "ONIX", "PRISMA", "S10", "SONIC", "SPIN", "TRACKER", "TRAILBLAZER", "VECTRA", "ZAFIRA"], "CHRYSLER": ["300C", "CARAVAN", "PT CRUISER", "TOWN & COUNTRY"], "CITROËN": ["AIRCROSS", "BASALT", "BERLINGO", "C3", "C3 AIRCROSS", "C4", "C4 CACTUS", "C4 LOUNGE", "C5", "JUMPER", "JUMPY", "XSARA PICASSO"], "DAF": ["CF", "XF"], "DODGE": ["CHALLENGER", "CHARGER", "DURANGO", "JOURNEY", "RAM"], "FIAT": ["ARGO", "BRAVA", "BRAVO", "CRONOS", "DOBLÒ", "DUCATO", "FASTBACK", "FIORINO", "FREEMONT", "GRAND SIENA", "IDEA", "LINEA", "MAREA", "MOBI", "PALIO", "PULSE", "PUNTO", "SIENA", "STILO", "STRADA", "TORO", "UNO"], "FORD": ["BRONCO", "COURIER", "ECOSPORT", "EDGE", "ESCORT", "F-1000", "F-250", "FIESTA", "FOCUS", "FUSION", "KA", "MAVERICK", "MUSTANG", "RANGER", "TERRITORY", "TRANSIT"], "GAC": ["AION ES", "AION V", "AION Y", "HYPTEC HT"], "GEELY": ["EX2", "EX5"], "GWM": ["HAVAL H6", "ORA 03", "ORA 5", "TANK 300", "WEY 07"], "HONDA": ["ACCORD", "CITY", "CIVIC", "CR-V", "FIT", "HR-V", "WR-V", "CG 125", "CG 150", "CG 160", "BIZ", "CB 300", "CB 500", "CB 650", "NC 750", "PCX", "XRE 190", "XRE 300"], "HYUNDAI": ["AZERA", "CRETA", "ELANTRA", "HB20", "HB20S", "I30", "IX35", "SANTA FE", "SONATA", "TUCSON", "VERACRUZ"], "IVECO": ["DAILY", "EUROCARGO", "TECTOR", "S-WAY", "STRALIS"], "JAC": ["E-JS1", "E-JS4", "IEV20", "J2", "J3", "J5", "J6", "T40", "T50", "T60", "T8"], "JAGUAR": ["E-PACE", "F-PACE", "F-TYPE", "I-PACE", "XE", "XF", "XJ"], "JEEP": ["CHEROKEE", "COMMANDER", "COMPASS", "GRAND CHEROKEE", "RENEGADE", "WRANGLER"], "KIA": ["BONGO", "CARNIVAL", "CERATO", "EV5", "NIRO", "PICANTO", "SORENTO", "SOUL", "SPORTAGE", "STINGER"], "LAND ROVER": ["DEFENDER", "DISCOVERY", "DISCOVERY SPORT", "FREELANDER", "RANGE ROVER", "RANGE ROVER EVOQUE", "RANGE ROVER SPORT", "RANGE ROVER VELAR"], "LEXUS": ["ES", "IS", "NX", "RX", "UX"], "MAN": ["TGX", "TGS"], "MERCEDES-BENZ": ["CLASSE A", "CLASSE B", "CLASSE C", "CLASSE E", "CLASSE S", "CLA", "CLS", "GLA", "GLB", "GLC", "GLE", "GLS", "SPRINTER", "ACCELO", "ATEGO", "ACTROS"], "MINI": ["COOPER", "COUNTRYMAN", "PACEMAN"], "MITSUBISHI": ["AIRTREK", "ASX", "ECLIPSE CROSS", "L200", "LANCER", "OUTLANDER", "PAJERO", "PAJERO SPORT"], "NISSAN": ["FRONTIER", "GRAND LIVINA", "KICKS", "LEAF", "LIVINA", "MARCH", "PATHFINDER", "SENTRA", "TIIDA", "VERSA", "X-TRAIL"], "PEUGEOT": ["2008", "206", "207", "208", "3008", "307", "308", "408", "5008", "BOXER", "EXPERT", "PARTNER"], "PORSCHE": ["718", "911", "CAYENNE", "MACAN", "PANAMERA", "TAYCAN"], "RAM": ["1500", "2500", "3500", "CLASSIC", "RAMPAGE"], "RENAULT": ["CAPTUR", "CLIO", "DUSTER", "FLUENCE", "KANGOO", "KWID", "LOGAN", "MASTER", "MEGANE", "OROCH", "SANDERO", "SCENIC", "SYMBOL"], "SCANIA": ["P", "G", "R", "S", "K"], "SUBARU": ["FORESTER", "IMPREZA", "LEGACY", "OUTBACK", "XV"], "SUZUKI": ["GRAND VITARA", "JIMNY", "S-CROSS", "SWIFT", "VITARA"], "TOYOTA": ["BANDEIRANTE", "CAMRY", "COROLLA", "COROLLA CROSS", "ETIOS", "HILUX", "PRIUS", "RAV4", "SW4", "YARIS", "YARIS CROSS"], "VOLKSWAGEN": ["AMAROK", "BORA", "FOX", "FUSCA", "GOL", "GOLF", "JETTA", "KOMBI", "NIVUS", "PARATI", "PASSAT", "POLO", "SAVEIRO", "SPACEFOX", "T-CROSS", "TAOS", "TIGUAN", "TOUAREG", "UP", "VIRTUS", "VOYAGE", "DELIVERY", "CONSTELLATION", "METEOR"], "VOLVO": ["C30", "C40", "EX30", "EX40", "EX90", "S40", "S60", "S90", "V40", "V60", "XC40", "XC60", "XC90", "FH", "FM", "VM"], "YAMAHA": ["CRYPTON", "FACTOR", "FAZER 150", "FAZER 250", "FLUO", "LANDER", "MT-03", "MT-07", "MT-09", "NMAX", "R3", "TÉNÉRÉ", "XJ6", "XTZ 125", "XTZ 250"], "OUTRA": ["OUTRO / NÃO LOCALIZADO"]}, "prices": {}, "priceTableMeta": {"erp_id": null, "standard_name": "Tabela Padrão", "commercial_names": [], "rule": "price_index 0 => standard; index N => Nth commercial column; zero price => standard fallback"}, "paymentConditions": [{"key": "PIX", "label": "PIX", "Id_CondPgtoERP": null}, {"key": "DEBITO", "label": "Cartão Débito", "Id_CondPgtoERP": null}, {"key": "CREDITO_1X", "label": "Cartão Crédito 1X", "Id_CondPgtoERP": null}, {"key": "CREDITO_2X", "label": "Cartão Crédito 2X", "Id_CondPgtoERP": null}, {"key": "DINHEIRO", "label": "Dinheiro", "Id_CondPgtoERP": null}], "integrationSchema": {"client_erp_id": null, "unit_erp_id": null, "inspector_erp_id": null, "service_erp_id": null, "price_table_erp_id": null, "payment_condition_erp_id": null, "brand_model_are_text": true}},$=x=>document.querySelector(x),$$=x=>[...document.querySelectorAll(x)];let step=1,client=null,kind='Individual',loc='Base',hist=[],brand='',model='',selected=[],paymentMode='FATURADO',paymentParts=[],nextOsId=10001,nextPaymentPartId=1;
+$('#clearServiceSearch').onclick=()=>{
+  const q=$('#serviceq');
+  q.value='';
+  // Dispara exatamente o mesmo fluxo que ocorre ao apagar o último caractere
+  // pelo teclado, garantindo que estado interno + tabela sejam recalculados.
+  q.dispatchEvent(new Event('input',{bubbles:true}));
+  q.focus();
+};
+
+function show(x){['config','home','flow'].forEach(y=>$('#'+y).classList.toggle('hidden',y!==x))}
+$('#counts').textContent=`Base real: ${D.clients.length} clientes · ${D.inspectors.length} vistoriadores · ${D.units.length} unidades · ${D.services.length} serviços · ${D.priceTableMeta.commercial_names.length} tabelas comerciais. Base operacional de veículos: ${Object.keys(D.models).length} marcas.`;
+$('#unit').innerHTML='<option></option>'+D.units.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');$('#insp').innerHTML='<option></option>'+D.inspectors.map(x=>`<option>${x}</option>`).join('');
+let authToken=null;
+function setAuthenticated(user,token){
+  const unit=$('#unit'), insp=$('#insp');
+  if(![...unit.options].some(x=>x.value===user.unidade_id))unit.add(new Option(user.unidade_nome,user.unidade_id));
+  unit.value=user.unidade_id;
+  if(![...insp.options].some(x=>x.value===user.vistoriador_nome))insp.add(new Option(user.vistoriador_nome,user.vistoriador_nome));
+  insp.value=user.vistoriador_nome;
+  authToken=token;
+  $('#who').textContent='';
+  const title=document.createElement('h1');title.textContent=user.unidade_nome;
+  const name=document.createElement('div');name.textContent=user.vistoriador_nome;
+  const logout=document.createElement('button');logout.textContent='SAIR';logout.style.marginTop='10px';
+  logout.onclick=async()=>{try{await fetch(API_BASE+'/api/logout',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},body:'{}'})}catch(e){}authToken=null;show('config');$('#loginPass').value='';};
+  $('#who').append(title,name,logout);show('home');
+}
+async function loginPreLaudo(){
+  const btn=$('#loginButton'),msg=$('#loginMessage');
+  btn.disabled=true;msg.textContent='Autenticando...';
+  try{
+    const response=await fetch(API_BASE+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({login:$('#loginUser').value,senha:$('#loginPass').value})});
+    const data=await response.json();
+    if(!response.ok||!data.ok)throw new Error(data.erro||'Não foi possível autenticar.');
+    $('#loginPass').value='';msg.textContent='';setAuthenticated(data.usuario,data.token);
+  }catch(e){msg.textContent=e.message}finally{btn.disabled=false}
+}
+$('#loginButton').onclick=loginPreLaudo;
+$('#loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')loginPreLaudo()});
+function picker(input,box,items,label,onpick){let q=$(input).value.toLowerCase();let a=items.filter(x=>label(x).toLowerCase().includes(q)).slice(0,40);$(box).classList.remove('hidden');$(box).innerHTML=a.map((x,i)=>`<button class="result" data-pick="${i}">${label(x)}</button>`).join('')||'<span class="muted">Nenhum resultado</span>';$$(`${box} [data-pick]`).forEach(b=>b.onclick=()=>{onpick(a[+b.dataset.pick]);$(box).classList.add('hidden')})}
+function normPeriod(x){return (x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function clientIsForcedCash(){return client&&normPeriod(client.period).includes('vista')}
+function setPaymentMode(mode){
+  if(clientIsForcedCash())mode='A_VISTA';
+  paymentMode=mode;
+  let box=$('#osPayChoice'); if(!client){box.classList.add('hidden');return}
+  box.classList.toggle('hidden',step!==4);
+  let inv=$('#chooseInvoice'), av=$('#chooseCash'), hint=$('#osPayHint');
+  inv.classList.toggle('on',paymentMode==='FATURADO'); av.classList.toggle('on',paymentMode==='A_VISTA');
+  inv.disabled=clientIsForcedCash();
+  inv.textContent=clientIsForcedCash()?'Faturar':'Faturar — '+client.period;
+  hint.textContent=clientIsForcedCash()
+    ?'Cliente À Vista: pagamento obrigatório no ato.'
+    :(paymentMode==='FATURADO'?'Esta OS seguirá o faturamento '+client.period.toLowerCase()+'.':'Exceção desta OS: pagamento obrigatório no ato.');
+  renderBanner();
+  if(step===4){
+    renderPrices();
+    $('#payarea').classList.toggle('hidden',paymentMode!=='A_VISTA');
+    if(paymentMode==='A_VISTA')renderPaymentParts();
+    $('#payrule').innerHTML=paymentMode==='A_VISTA'
+      ?'<b>À Vista</b><br><small>Pagamento obrigatório nesta OS. Selecione a condição de pagamento.</small>'
+      :`<b>Faturado</b><br><small>Periodicidade do cliente: ${client.period}. Faturado Global: a condição do ERP será vinculada pelo cadastro do cliente.</small>`;
+  }
+}
+$('#chooseInvoice').onclick=()=>setPaymentMode('FATURADO');
+$('#chooseCash').onclick=()=>setPaymentMode('A_VISTA');
+// Busca de clientes por nome fantasia ou razão social, sem alterar o cadastro original.
+function normalizeClientSearch(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').trim()}
+function clientDisplayName(x){return String(x.fantasy||'').trim()||String(x.name||'').trim()}
+function clientSearch(){
+  const term=normalizeClientSearch($('#q').value);
+  const matches=D.clients.filter(x=>normalizeClientSearch(x.fantasy).includes(term)||normalizeClientSearch(x.name).includes(term)).slice(0,40);
+  const box=$('#results');box.classList.remove('hidden');box.replaceChildren();
+  if(!matches.length){const empty=document.createElement('span');empty.className='muted';empty.textContent='Nenhum resultado';box.append(empty);return}
+  matches.forEach(x=>{
+    const button=document.createElement('button');button.type='button';button.className='result';
+    const fantasy=document.createElement('b');fantasy.textContent=clientDisplayName(x);
+    const legal=document.createElement('small');legal.textContent='Razão social: '+(x.name||'');
+    button.append(fantasy,document.createElement('br'),legal);
+    button.onclick=()=>{
+      client=x;$('#q').value=clientDisplayName(x);box.classList.add('hidden');
+      const chosen=$('#chosen');chosen.classList.remove('hidden');chosen.replaceChildren();
+      const name=document.createElement('b');name.textContent=clientDisplayName(x);
+      const details=document.createElement('small');details.textContent='Razão social: '+(x.name||'')+' · '+x.period;
+      chosen.append(name,document.createElement('br'),details);
+      setPaymentMode(clientIsForcedCash()?'A_VISTA':'FATURADO');
+    };
+    box.append(button);
+  });
+}
+$('#q').oninput=clientSearch;$('#q').onfocus=clientSearch;
+const brands=Object.keys(D.models).sort();function brandSearch(){picker('#brandq','#brandresults',brands,x=>x,x=>{brand=x;model='';$('#brandq').value=x;$('#brandchosen').classList.remove('hidden');$('#brandchosen').innerHTML='<b>'+x+'</b>';$('#modelq').disabled=false;$('#modelq').value='';$('#modelq').placeholder='Digite para buscar modelo...';$('#modelchosen').classList.add('hidden')})}$('#brandq').oninput=brandSearch;$('#brandq').onfocus=brandSearch;
+function modelSearch(){if(!brand)return;picker('#modelq','#modelresults',D.models[brand],x=>x,x=>{model=x;$('#modelq').value=x;$('#modelchosen').classList.remove('hidden');$('#modelchosen').innerHTML='<b>'+x+'</b>'})}$('#modelq').oninput=modelSearch;$('#modelq').onfocus=modelSearch;
+$('#brandModel').addEventListener('input',e=>{
+  let v=e.target.value.trim(),i=v.indexOf('/');
+  if(i>0){brand=v.slice(0,i).trim();model=v.slice(i+1).trim()}
+  else {brand=v;model=''}
+  $('#brandq').value=brand;$('#modelq').value=model;
+});
+function renderServices(){let q=$('#serviceq').value.toLowerCase();let a=D.services.filter(x=>x.kind===kind&&x.name.toLowerCase().includes(q)&&!selected.some(s=>s.code===x.code));$('#servicelist').innerHTML=a.map(x=>`<div class="check"><span style="flex:1"><b>${x.name}</b><br><small>ERP ${x.code}</small></span><button type="button" class="addsvc" data-code="${x.code}" style="width:48px;min-height:42px;padding:0;font-size:24px">+</button></div>`).join('')||'<span class="muted">Nenhum outro serviço encontrado.</span>';$$('.addsvc').forEach(b=>b.onclick=()=>{let x=D.services.find(s=>s.code===b.dataset.code);if(x&&!selected.some(s=>s.code===x.code))selected.push(x);renderServices();renderSelected();serviceSearch();renderPrices()})}$('#serviceq').oninput=renderServices;
+function renderSelected(){let box=$('#selectedbox');box.classList.toggle('hidden',!selected.length);$('#selectedcount').textContent=selected.length;$('#selectedlist').innerHTML=selected.map(x=>`<div class="check"><span style="flex:1"><b>${x.name}</b><br><small>ERP ${x.code}</small></span><button type="button" class="remsvc" data-code="${x.code}" style="width:48px;min-height:42px;padding:0;font-size:20px">×</button></div>`).join('');$$('.remsvc').forEach(b=>b.onclick=()=>{selected=selected.filter(x=>x.code!==b.dataset.code);renderSelected();renderServices();renderPrices()})}
+function isParticularClient(){
+  return !!client&&(client.type==='PARTICULAR'||(client.name||'').trim().toLowerCase()==='particular');
+}
+function resolveServicePriceBase(service){
+ const p=D.prices[service.code];
+ if(!p)return {referenceCents:0,chargedCents:0,source:'NOT_FOUND',label:'Preço não cadastrado',editable:true};
+ const detail=erpPriceDetail(p,client);
+ return {...detail,referenceCents:detail.cents,chargedCents:detail.cents,editable:false};
+}
+function resolveServicePrice(service){
+  const p=resolveServicePriceBase(service);
+  p.editable=!!(systemConfig&&systemConfig.clients[client?.id_interno]?.price);
+  p.label=p.editable?'Preço autorizado pelo cliente':p.label.replace(' — editável','');
+  return p;
+}
+function moneyInputFromCents(c){return (c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function renderPrices(){
+  let show=cash()&&selected.length;
+  $('#prices').classList.toggle('hidden',!show);
+  if(!show){$('#pricerows').innerHTML='';total();return}
+  let previous={};document.querySelectorAll('#pricerows .price').forEach(el=>previous[el.dataset.code]=cents(el));
+  $('#pricerows').innerHTML=selected.map(s=>{
+    let p=resolveServicePrice(s),charged=previous[s.code]!==undefined?previous[s.code]:p.chargedCents;
+    let ref=(p.referenceCents/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    if(!p.editable)charged=p.chargedCents;
+    if(p.editable)return `<div class="check"><span style="flex:1"><b>${s.name}</b><br><small>${p.label}${p.referenceCents?' · Referência: '+ref:''}</small></span><div style="min-width:145px;flex:0 0 145px"><label style="font-size:11px">Preço a cobrar</label><input class="price" style="width:100%;min-height:48px;margin:0;padding:10px" data-code="${s.code}" data-source="${p.source}" data-reference="${p.referenceCents}" data-editable="1" inputmode="numeric" value="${moneyInputFromCents(charged)}" oninput="moneyMask(this);total()"></div></div>`;
+    let value=(charged/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    return `<div class="check"><span style="flex:1"><b>${s.name}</b><br><small>🔒 ${p.label}</small></span><b>${value}</b><input type="hidden" class="price" data-code="${s.code}" data-source="${p.source}" data-reference="${p.referenceCents}" data-editable="0" value="${charged}"></div>`;
+  }).join('');
+  total();
+}
+function cents(el){if(!el)return 0;if(el.type==='hidden')return parseInt(el.value||'0',10)||0;let d=(el.value||'').replace(/\D/g,'');return d?parseInt(d,10):0}
+
+function moneyMask(el){let d=el.value.replace(/\D/g,'').slice(0,12);if(!d){el.value='';return}el.value=(parseInt(d,10)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function totalCents(){return $$('.price').reduce((a,x)=>a+cents(x),0)}
+function total(){let v=totalCents()/100;$('#total').textContent=v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+$$('[data-kind]').forEach(b=>b.onclick=()=>{$$('[data-kind]').forEach(x=>x.classList.remove('on'));b.classList.add('on');kind=b.dataset.kind;selected=[];$('#serviceq').value='';renderServices();renderSelected();renderPrices()});$$('[data-loc]').forEach(b=>b.onclick=()=>{$$('[data-loc]').forEach(x=>x.classList.remove('on'));b.classList.add('on');loc=b.dataset.loc});
+function cash(){return !!client&&paymentMode==='A_VISTA'}
+function renderBanner(){
+  const b=$('#clientbanner');
+  if(!client||step===1){b.classList.add('hidden');return}
+  b.classList.remove('hidden');$('#bannername').textContent=client.name;
+  const av=cash(),st=$('#bannerstatus');
+  if(av){st.textContent='À VISTA · PAGAMENTO OBRIGATÓRIO';st.style.background='#fde8e8';st.style.color='#a40000';st.style.border='1px solid #e2a3a3'}
+  else{st.textContent='FATURADO · '+client.period.toUpperCase();st.style.background='#e7f6ea';st.style.color='#176b2c';st.style.border='1px solid #9bc9a5'}
+}
+function render(){
+  renderBanner();[1,2,3,4].forEach(n=>$('#s'+n).classList.toggle('hidden',n!==step));
+  $('#title').textContent=step+'/4 — '+['','Cliente','Veículo','Serviços','Pagamento'][step];
+  $('#next').textContent=step===4?'ENVIAR OS':'Continuar';
+  if(step===3){renderServices();renderSelected();$('#prices').classList.add('hidden')}
+  if(step===4){
+    setPaymentMode(clientIsForcedCash()?'A_VISTA':paymentMode);
+    if(cash())renderPaymentParts();
+    renderPaymentStatus();
+    let c=cash();$('#payarea').classList.toggle('hidden',!c);
+    $('#payrule').innerHTML=c
+      ?'<b>À Vista</b><br><small>Pagamento obrigatório nesta OS. Selecione a condição de pagamento.</small>'
+      :`<b>Faturado</b><br><small>Periodicidade do cliente: ${client.period}. Faturado Global: a condição do ERP será vinculada pelo cadastro do cliente.</small>`;
+    let priceEls={};document.querySelectorAll('#pricerows .price').forEach(e=>priceEls[e.dataset.code]=e);
+    let lines=selected.map(x=>{
+      if(!c)return '• '+x.name;
+      let el=priceEls[x.code],pc=cents(el),val=pc/100;
+      return '• '+x.name+' — <b>'+(pc?val.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'PREÇO NÃO INFORMADO')+'</b>';
+    }).join('<br>');
+    let tot=totalCents()/100;
+    let cond=c?paymentParts.map(p=>(D.paymentConditions.find(x=>x.key===p.key)?.label||'')+' '+((p.value||0)/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})).join(' + '):'Faturado';
+    $('#summary').innerHTML=`<b>Resumo</b><br>Cliente: ${client.name}<br>Pagamento da OS: <b>${c?'À Vista — '+cond:'Faturado — '+client.period}</b><br>Placa: ${$('#plate').value}<br>Veículo: ${brand} ${model}<br>Vistoria: ${loc}<br>Serviços:<br>${lines}${c?'<hr><b>TOTAL DA OS — '+tot.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})+'</b><br><span id="sumproof"></span><br><span id="sumvalidation"></span>':''}`;
+    
+  }
+}
+function valid(){
+  if(step===1){let r=systemConfig?.clients[client?.id_interno]||{};return client&&$('#driver').value&&(!r.cpf||$('#cpf').value)&&(!r.email||$('#email').value)&&(!r.phone||$('#phone').value);}
+  if(step===2)return $('#plate').value&&brand&&model;
+  if(step===3)return selected.length>0;
+  if(step===4&&cash()&&totalCents()===0)return selected.length>0;
+  if(step===4)return !cash()||(paymentDistributionComplete()&&paymentParts.every(p=>!paymentNeedsProof(p)||p.proofAttached)&&[...document.querySelectorAll('#pricerows .price')].length===selected.length&&[...document.querySelectorAll('#pricerows .price')].every(x=>cents(x)>=0));
+}
+$('#new').onclick=()=>{if(!authToken){show('config');return;}
+  setOSOpenedAtNow();step=1;client=null;brand='';model='';selected=[];paymentMode='FATURADO';paymentParts=[];['q','driver','cpf','email','phone','plate','brandq','modelq','serviceq'].forEach(x=>$('#'+x).value='');$('#brandModel').value='';$('#chosen').classList.add('hidden');$('#osPayChoice').classList.add('hidden');paymentParts=[];$('#brandchosen').classList.add('hidden');$('#modelchosen').classList.add('hidden');$('#modelq').disabled=true;
+['cnhcam','cnhfile','crlvcam','crlvfile','platecam','oscam','osfile'].forEach(x=>{let e=$('#'+x);if(e)e.value=''});
+['cnhpreview','platepreview','ospreview','cnhstatus'].forEach(x=>$('#'+x)?.classList.add('hidden'));
+show('flow');render()};
+function buildOSPayload(osId){
+  validatePaymentParts();
+  var itens=selected.map(function(x){
+    var rp=resolveServicePrice(x);
+    var el=[...document.querySelectorAll('#pricerows .price')].find(function(e){return e.dataset.code===x.code});
+    var cobrado=cash()?cents(el):rp.referenceCents;
+    var referencia=parseInt((el&&el.dataset.reference)||rp.referenceCents||0,10);
+    return {
+      servico:x.name,
+      servico_erp_id:x.erp_id||x.id_interno||('SRV_'+x.code.replace('.','_')),
+      preco_referencia_centavos:referencia,
+      preco_cobrado_centavos:cobrado,
+      preco_origem:(el&&el.dataset.source)||rp.source,
+      preco_editado:!!el&&el.dataset.editable==='1'&&cobrado!==referencia
+    };
+  });
+
+  var pagamentos=cash()?paymentParts.filter(p=>p.key).map(function(p){
+    var v=p.proofRead?proofValidationFor(p):null;
+    return {
+      condicao_pagamento:p.key,
+      Id_CondPgtoERP:D.paymentConditions.find(c=>c.key===p.key)?.Id_CondPgtoERP||p.Id_CondPgtoERP||null,
+      valor_centavos:Number(p.value)||0,
+      validated:!!p.validated,
+      cashCode:p.cashCode||null,
+      identificador_manual:p.manualIdentifier||null,
+      comprovante_nome:p.proofName||null,
+      comprovante_anexado:!!p.proofAttached,
+      comprovante_imagem:p.proofDataUrl||null,
+      comprovante_leitura:p.proofRead?{
+        condicao:p.proofRead.condition||null,
+        valor_centavos:p.proofRead.valueCents,
+        data_hora:p.proofRead.timestamp||null,
+        id_transacao:p.proofRead.transactionId||null,
+        tipo_identificador:p.proofRead.condition==='PIX'?'PIX_ID_TRANSACAO':(p.proofRead.transactionId?'AUT':null),
+        validacao:v
+      }:null
+    };
+  }):[];
+
+  var needsReview=pagamentos.some(function(p){
+    return p.condicao_pagamento==='DINHEIRO' ||
+      (p.comprovante_leitura && p.comprovante_leitura.validacao && p.comprovante_leitura.validacao.needsReview);
+  });
+
+  return {
+    id_interno:null, // Gerado exclusivamente pelo servidor SQLite
+    erp_id:null,
+    aberta_em:osOpenedAt?osOpenedAt.toISOString():null,
+    enviada_em:new Date().toISOString(),
+    unidade_id:$('#unit').value||null,
+    unidade_nome:$('#unit').selectedOptions.length?$('#unit').selectedOptions[0].textContent:null,
+    vistoriador:$('#insp').value||null,
+    cliente_id:client.id_interno||null,
+    cliente_erp_id:client.erp_id||null,
+    cliente_nome:client.name,
+    placa:$('#plate').value,
+    marca:brand,
+    modelo:model,
+    local_vistoria:loc,
+    condutor:$('#driver').value,
+    cpf:$('#cpf').value,
+    email:$('#email').value,
+    celular:$('#phone').value,
+    requisicao_cliente:$('#clientos').value||null,
+    pagamento_os:paymentMode,
+    status_pagamento:getPaymentStatus(),
+    periodicidade_cliente:client.period,
+    tabela_preco_indice:client.price_index,
+    tabela_preco_erp_id:null,
+    condicao_pagamento:cash()?'MULTIPLA':'FATURADO',
+    Id_CondPgtoERP:null,
+    total_centavos:totalCents(),
+    status_conferencia:needsReview?'REVISAO_ADMINISTRATIVA':'VALIDADA',
+    pagamentos:pagamentos,
+    itens:itens
+  };
+}
+
+function arquivoComoDataURL(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('Falha ao ler documento'));r.readAsDataURL(file)})}
+async function anexarDocumentosOriginais(payload){
+  payload.documentos={};
+  for(const [tipo,ids] of Object.entries({CNH:['cnhfile','cnhcam'],CRLV:['crlvfile','crlvcam'],REQUISICAO:['osfile','oscam']})){
+    let file=null;for(const id of ids){const el=document.getElementById(id);if(el?.files?.[0]){file=el.files[0];break}}
+    if(file){if(file.size>12*1024*1024)throw new Error(tipo+': arquivo maior que 12 MB');payload.documentos[tipo]=await arquivoComoDataURL(file)}
+  }
+}
+async function enviarOSBanco(payload){
+  var resp=await fetch(API_BASE+'/api/os',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+(authToken||'')},
+    body:JSON.stringify(payload)
+  });
+  var data=null;
+  try{data=await resp.json()}catch(e){}
+  if(!resp.ok || !data || !data.ok){
+    throw new Error((data&&data.erro)||('Falha ao gravar a OS. HTTP '+resp.status));
+  }
+  return data.registro;
+}
+
+$('#next').onclick=async()=>{
+  if(!valid()){
+    $('#msg').textContent=(step===3&&cash()&&[...document.querySelectorAll('#pricerows .price')].some(x=>cents(x)<=0))
+      ?'Informe um preço maior que zero para todos os serviços desta OS.'
+      :'Preencha os campos obrigatórios.';
+    return;
+  }
+  $('#msg').textContent='';
+  if(step<4){step++;render();return}
+
+  var btn=$('#next');
+  if(btn.disabled)return;
+  btn.disabled=true;
+  var oldText=btn.textContent;
+  btn.textContent='ENVIANDO...';
+
+  var osId=nextOsId;
+  assignCashCodes(osId);
+  var payload=buildOSPayload(osId);
+
+  try{
+    await anexarDocumentosOriginais(payload);
+    await loadSystemConfig();
+    const localErrors=localParameterErrors(payload);
+    if(localErrors.length)throw Error(localErrors.join(' '));
+    const check=await fetch('/api/os/validar',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+authToken},body:JSON.stringify(payload)});
+    const result=await check.json();
+    if(!check.ok||!result.ok)throw Error(result.erro||'Falha na validação');
+    if(result.errors.length)throw Error(result.errors.join(' '));
+    var saved=await enviarOSBanco(payload);
+    nextOsId++;
+    payload.id_interno=saved.id_interno;
+
+    var localRecord={
+      os_id:osId,
+      db_id:saved.id,
+      id_interno:saved.id_interno,
+      p:payload.placa,
+      c:payload.cliente_nome,
+      pending:saved.status_conferencia==='REVISAO_ADMINISTRATIVA',
+      pagamento_os:payload.pagamento_os,
+      status_pagamento:payload.status_pagamento,
+      status_conferencia:saved.status_conferencia,
+      periodicidade_cliente:payload.periodicidade_cliente,
+      cliente_erp_id:payload.cliente_erp_id,
+      tabela_preco_indice:payload.tabela_preco_indice,
+      tabela_preco_erp_id:null,
+      condicao_pagamento:payload.condicao_pagamento,
+      Id_CondPgtoERP:null,
+      pago:payload.status_pagamento==='PAGO',
+      pagamentos:payload.pagamentos,
+      itens:payload.itens
+    };
+    hist.unshift(localRecord);
+    $('#pend').textContent=hist.filter(x=>x.pending).length;
+    $('#history').innerHTML=hist.map(x=>`<div class="card"><b>${x.p}</b><br><small>${x.c} · ${x.pending?'Revisão administrativa':'Enviada / validada'}</small></div>`).join('');
+    showOperatorNotice(saved.status_conferencia==='REVISAO_ADMINISTRATIVA'
+      ?'⚠ OS enviada e gravada no banco para REVISÃO ADMINISTRATIVA.'
+      :'✓ OS enviada e gravada no banco com sucesso.');
+    show('home');
+  }catch(err){
+    console.error('Erro ao enviar OS',err);
+    $('#msg').textContent='Não foi possível enviar a OS: '+err.message;
+  }finally{
+    btn.disabled=false;
+    btn.textContent=oldText;
+  }
+};
+$('#back').onclick=()=>{if(step===1)show('home');else{step--;render()}};
+$('#phone').oninput=e=>{let d=e.target.value.replace(/\D/g,'').slice(0,11);e.target.value=d.length<=10?d.replace(/(\d{2})(\d{4})(\d{0,4})/,'($1) $2-$3'):d.replace(/(\d{2})(\d{5})(\d{0,4})/,'($1) $2-$3')};
+$('#cpf').oninput=e=>{let d=e.target.value.replace(/\D/g,'').slice(0,11);e.target.value=d.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/,'$1.$2.$3-$4')};
+$('#plate').oninput=e=>e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7);
+$('#clientos').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,12);
+
+function showReceived(input,box,nameId){
+  let f=input.files&&input.files[0]; if(!f)return null;
+  let b=$(box); b.classList.remove('hidden'); let im=b.querySelector('img');
+  if(f.type==='application/pdf'){if(im)im.classList.add('hidden')}
+  else if(im){im.classList.remove('hidden');im.src=URL.createObjectURL(f)}
+  if(nameId&&$(nameId))$(nameId).textContent=(f.type==='application/pdf'?'📄 ':'🖼️ ')+f.name;
+  return f;
+}
+function cpfValid(c){
+  c=(c||'').replace(/\D/g,'');if(c.length!==11||/^(\d)\1+$/.test(c))return false;
+  let digit=n=>{let sum=0;for(let i=0;i<n;i++)sum+=+c[i]*(n+1-i);let d=(sum*10)%11;return d===10?0:d};
+  return digit(9)===+c[9]&&digit(10)===+c[10];
+}
+function cpfFmt(c){return (c||'').replace(/\D/g,'').replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4')}
+function extractCPF(text){
+  let norm=(text||'').replace(/[Oo]/g,'0').replace(/[Il|]/g,'1');
+  let lines=norm.split(/\n/);
+  let near=[];
+  for(let i=0;i<lines.length;i++) if(/CPF/i.test(lines[i])) near.push(lines[i],lines[i+1]||'');
+  let pool=near.join(' ')+' '+norm;
+  let a=(pool.match(/\d[\d.\s-]{8,18}\d/g)||[]).map(x=>x.replace(/\D/g,'')).filter(x=>x.length===11);
+  return a.find(cpfValid)||a[0]||'';
+}
+function cleanNameCandidate(x){
+  return (x||'').replace(/[|_]+/g,' ').replace(/\s+/g,' ').replace(/^[^A-ZÁÀÂÃÉÊÍÓÔÕÚÇ]+|[^A-ZÁÀÂÃÉÊÍÓÔÕÚÇ.' -]+$/gi,'').trim();
+}
+function badNameCandidate(x){
+  let u=(x||'').toUpperCase();
+  const bad=[
+    'DOCUMENTO DE IDENTIFICA','DOCUMENTO','IDENTIFICAÇÃO','IDENTIFICACAO','CARTEIRA NACIONAL',
+    'HABILITAÇÃO','HABILITACAO','REPÚBLICA','REPUBLICA','FEDERATIVA','BRASIL','NOME E SOBRENOME',
+    'NOME','FILIAÇÃO','FILIACAO','NASCIMENTO','DATA DE NASCIMENTO','VALIDADE','NACIONALIDADE',
+    'CPF','REGISTRO','CATEGORIA','ASSINATURA','EMISSÃO','EMISSAO','LOCAL','UF','DOC. IDENTIDADE',
+    'DOC IDENTIDADE','ÓRGÃO','ORGAO','PERMISSÃO','PERMISSAO','ACC','RENACH','ASSINADO DIGITALMENTE','ASSINADO','DIGITALMENTE','QR CODE','CÓDIGO DE SEGURANÇA','CODIGO DE SEGURANCA'
+  ];
+  return !u||bad.some(b=>u===b||u.startsWith(b+' ')||u.includes(b))||/\d{3,}/.test(u);
+}
+function plausiblePersonName(x){
+  x=cleanNameCandidate(x);if(badNameCandidate(x))return false;
+  let words=x.split(' ').filter(Boolean);
+  if(words.length<2||words.length>7||x.length<7||x.length>70)return false;
+  if(words.filter(w=>w.length>=3).length<2)return false;
+  if(words.filter(w=>w.length===1).length>1)return false;
+  if(words.some(w=>/^(III|IV|VI|VII|VIII|IX|SIX)$/i.test(w)))return false;
+  return /^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ.' -]+$/i.test(x);
+}
+function extractName(text){
+  let lines=(text||'').split(/\n/).map(cleanNameCandidate).filter(Boolean);
+  // Strongest rule: locate the CNH name label and inspect the following lines only.
+  for(let i=0;i<lines.length;i++){
+    let u=lines[i].toUpperCase();
+    if(/^(NOME( E SOBRENOME)?)(\s*:)?$/.test(u)||u.startsWith('NOME E SOBRENOME')){
+      let same=cleanNameCandidate(lines[i].replace(/^NOME(?: E SOBRENOME)?\s*:?\s*/i,''));
+      if(plausiblePersonName(same))return same;
+      for(let j=i+1;j<Math.min(lines.length,i+5);j++){
+        if(plausiblePersonName(lines[j]))return lines[j];
+      }
+    }
+  }
+  // Secondary rule: score plausible person names, heavily excluding document labels.
+  let candidates=lines.filter(plausiblePersonName).map((x,i)=>{
+    let score=0, u=x.toUpperCase();
+    if(/^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ.' -]+$/.test(u))score+=2;
+    let wc=x.split(' ').length;if(wc>=2&&wc<=5)score+=2;
+    if(x.length>=12&&x.length<=45)score+=1;
+    if(/DA |DE |DO |DOS |DAS /.test(' '+u+' '))score+=1;
+    return {x,score};
+  }).sort((a,b)=>b.score-a.score);
+  return candidates.length?candidates[0].x:'';
+}
+function normalizeOcrText(t){return (t||'').replace(/\u00a0/g,' ').replace(/[ \t]+/g,' ').replace(/\r/g,'')}
+function parseCnhText(text){
+  text=normalizeOcrText(text);
+  let cpf=extractCPF(text),name=extractName(text);
+  return {cpf,name,ok:!!(plausiblePersonName(name)&&cpf&&cpfValid(cpf))};
+}
+async function pdfNativeText(pdf){
+  let all=[];
+  for(let n=1;n<=Math.min(pdf.numPages,2);n++){
+    let pg=await pdf.getPage(n),tc=await pg.getTextContent();
+    all.push(tc.items.map(i=>i.str).join('\n'));
+  }
+  return all.join('\n');
+}
+function enhanceCanvas(src){
+  let c=document.createElement('canvas'),ctx=c.getContext('2d');
+  c.width=src.width;c.height=src.height;ctx.drawImage(src,0,0);
+  let im=ctx.getImageData(0,0,c.width,c.height),d=im.data;
+  for(let i=0;i<d.length;i+=4){
+    let g=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
+    g=g<205?Math.max(0,(g-80)*1.55):255;
+    d[i]=d[i+1]=d[i+2]=g;
+  }
+  ctx.putImageData(im,0,0);return c;
+}
+function cropCanvas(src,x,y,w,h,scale=2){
+  let c=document.createElement('canvas'),ctx=c.getContext('2d');
+  c.width=Math.round(w*scale);c.height=Math.round(h*scale);
+  ctx.imageSmoothingEnabled=true;ctx.drawImage(src,x,y,w,h,0,0,c.width,c.height);return enhanceCanvas(c);
+}
+async function recognizeWith(worker,source){let r=await worker.recognize(source,{rotateAuto:true});return r.data.text||''}
+async function recognizeData(worker,source){let r=await worker.recognize(source,{rotateAuto:true});return r.data}
+
+function cropRel(src,x,y,w,h,scale=1){
+  return cropCanvas(src,Math.round(src.width*x),Math.round(src.height*y),
+                    Math.round(src.width*w),Math.round(src.height*h),scale);
+}
+function rgbToHsv(r,g,b){
+  r/=255;g/=255;b/=255;let mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,h=0;
+  if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360}
+  return [h,mx?d/mx:0,mx];
+}
+function detectDigitalCnhFront(pageCanvas){
+  // Detect the pale-green SENATRAN document area rather than assuming fixed page coordinates.
+  let ctx=pageCanvas.getContext('2d'),im=ctx.getImageData(0,0,pageCanvas.width,pageCanvas.height),d=im.data;
+  let step=Math.max(2,Math.round(pageCanvas.width/600)),xs=[],ys=[];
+  for(let y=0;y<pageCanvas.height;y+=step)for(let x=0;x<pageCanvas.width;x+=step){
+    let i=(y*pageCanvas.width+x)*4,[h,s,v]=rgbToHsv(d[i],d[i+1],d[i+2]);
+    if(h>=55&&h<=175&&s>=.025&&s<=.45&&v>=.55){xs.push(x);ys.push(y)}
+  }
+  if(xs.length<200)return cnhFrontFromDigitalPdf(pageCanvas);
+  xs.sort((a,b)=>a-b);ys.sort((a,b)=>a-b);
+  let q=(arr,p)=>arr[Math.min(arr.length-1,Math.floor(arr.length*p))];
+  let x0=q(xs,.01),x1=q(xs,.99),y0=q(ys,.01),y1=q(ys,.99),w=x1-x0;
+  // Digital CNH front is landscape ~1.50:1. If pale green includes back/MRZ, keep only top front.
+  let h=Math.min(y1-y0, w/1.48);
+  x0=Math.max(0,x0-w*.025);y0=Math.max(0,y0-h*.025);w=Math.min(pageCanvas.width-x0,w*1.05);h=Math.min(pageCanvas.height-y0,h*1.05);
+  return cropCanvas(pageCanvas,Math.round(x0),Math.round(y0),Math.round(w),Math.round(h),2.0);
+}
+function cnhFrontFromDigitalPdf(pageCanvas){
+  // Fallback for the calibration PDF.
+  return cropRel(pageCanvas,0.078,0.134,0.401,0.229,2.0);
+}
+function cnhFixedRois(card){
+  // Relative to the FRONT of the standardized CNH, not to the PDF page.
+  return {
+    name: cropRel(card,0.177,0.268,0.625,0.080,4.2),
+    cpf:  cropRel(card,0.454,0.570,0.250,0.080,4.2)
+  };
+}
+function extractNameFromNameRoi(text){
+  let lines=(text||'').split(/\n/).map(x=>cleanNameCandidate(x.replace(/^\s*2\s*[-.]?\s*NOME(?: E SOBRENOME)?\s*/i,''))).filter(Boolean);
+  // Inside the name ROI only: discard label and known non-value text, then take the best line.
+  lines=lines.filter(x=>!badNameCandidate(x)&&plausiblePersonName(x));
+  return lines.sort((a,b)=>{
+    let wa=a.split(' '),wb=b.split(' ');
+    let sa=(wa.length>=2&&wa.length<=5?5:0)+(a.length>=12&&a.length<=45?3:0)+Math.min(a.length,35)/35;
+    let sb=(wb.length>=2&&wb.length<=5?5:0)+(b.length>=12&&b.length<=45?3:0)+Math.min(b.length,35)/35;
+    return sb-sa;
+  })[0]||'';
+}
+
+
+function extractMrzName(text){
+  let lines=(text||'').toUpperCase().split(/\n/).map(x=>x.replace(/\s+/g,'').trim()).filter(Boolean);
+  let candidates=[];
+  for(let line of lines){
+    if((line.match(/</g)||[]).length>=2){
+      // Reject MRZ lines that are primarily document numbers/dates.
+      let alpha=(line.match(/[A-Z]/g)||[]).length, digits=(line.match(/\d/g)||[]).length;
+      if(digits>alpha)continue;
+      let cleaned=line.replace(/[^A-Z<]/g,'');
+      let parts=cleaned.split(/<+/).filter(x=>x.length>=2);
+      if(parts.length>=2){
+        let name=parts.join(' ').trim();
+        if(plausiblePersonName(name))candidates.push(name);
+      }
+    }
+  }
+  candidates.sort((a,b)=>b.length-a.length);
+  return candidates[0]||'';
+}
+function extractCpfAggressive(text){
+  let direct=extractCPF(text); if(direct&&cpfValid(direct))return direct;
+  let norm=(text||'').toUpperCase()
+    .replace(/[OQ]/g,'0').replace(/[IL|]/g,'1').replace(/S/g,'5').replace(/B/g,'8')
+    .replace(/[^0-9]/g,'');
+  for(let i=0;i<=norm.length-11;i++){
+    let c=norm.slice(i,i+11); if(cpfValid(c))return c;
+  }
+  return '';
+}
+
+function normAnchor(s){
+  return (s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^A-Z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+}
+function unionBBox(items){
+  let xs=[],ys=[],xe=[],ye=[];
+  for(let i of items){let b=i.bbox||{};xs.push(b.x0||0);ys.push(b.y0||0);xe.push(b.x1||0);ye.push(b.y1||0)}
+  return {x0:Math.min(...xs),y0:Math.min(...ys),x1:Math.max(...xe),y1:Math.max(...ye)};
+}
+function findNameAnchor(data){
+  // Prefer OCR lines because the official label is printed as "2 e 1 NOME E SOBRENOME".
+  let lines=(data.lines||[]).map(l=>({text:normAnchor(l.text),bbox:l.bbox})).filter(x=>x.bbox);
+  let hit=lines.find(x=>x.text.includes('NOME')&&x.text.includes('SOBRENOME'));
+  if(hit)return hit.bbox;
+  // Word fallback: find NOME and SOBRENOME on approximately the same baseline.
+  let words=(data.words||[]).filter(w=>w.bbox&&w.text);
+  for(let i=0;i<words.length;i++){
+    if(normAnchor(words[i].text)==='NOME'){
+      let near=words.filter(w=>Math.abs(w.bbox.y0-words[i].bbox.y0)<Math.max(18,(words[i].bbox.y1-words[i].bbox.y0)*1.5));
+      let sob=near.find(w=>normAnchor(w.text).includes('SOBRENOME'));
+      if(sob)return unionBBox([words[i],sob]);
+    }
+  }
+  return null;
+}
+function roiBelowAnchor(src,b){
+  let ah=Math.max(10,b.y1-b.y0),x0=Math.max(0,b.x0-ah*.25),x1=Math.min(src.width,Math.max(b.x1+ah*8,src.width*.82));
+  let y0=Math.max(0,b.y1-ah*.10),y1=Math.min(src.height,b.y1+ah*2.6);
+  return cropCanvas(src,Math.round(x0),Math.round(y0),Math.round(x1-x0),Math.round(y1-y0),4.0);
+}
+function sanitizePersonNameLine(x){
+  x=(x||'').toUpperCase().replace(/\s+/g,' ').trim();
+  // Date / numeric field marks the beginning of the next CNH field.
+  x=x.replace(/\s+\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}.*$/,'');
+  x=x.replace(/\s+\d.*$/,'');
+  // Name accepts letters, accents, apostrophe, hyphen and spaces only.
+  x=x.replace(/[^A-ZÁÀÂÃÉÊÍÓÔÕÚÇ' -]/g,' ').replace(/\s+/g,' ').trim();
+  return x;
+}
+function bestNameFromAnchoredRoi(text){
+  let lines=(text||'').split(/\n/).map(sanitizePersonNameLine).filter(Boolean);
+  lines=lines.filter(x=>plausiblePersonName(x));
+  lines=lines.filter(x=>!/NOME|SOBRENOME|HABILITA|NASCIMENTO|VALIDADE|CPF/i.test(x));
+  lines.sort((a,b)=>b.length-a.length);
+  return lines[0]||'';
+}
+function extractPhysicalCnhName(text){
+  let raw=(text||'').split(/\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);
+  for(let i=0;i<raw.length;i++){
+    let u=raw[i].toUpperCase();
+    if(/NOME\\s+E\\s+SOBRENOME|NOME\\s+SOBRENOME/.test(u)){
+      let tail=cleanNameCandidate(raw[i].replace(/^.*?NOME\\s+(?:E\\s+)?SOBRENOME\\s*/i,''));
+      if(plausiblePersonName(tail))return tail;
+      for(let j=i+1;j<Math.min(raw.length,i+4);j++){
+        let c=cleanNameCandidate(raw[j]);
+        if(plausiblePersonName(c))return c;
+      }
+    }
+  }
+  return '';
+}
+
+function extractPhysicalCnhCpf(text){
+  let lines=(text||'').toUpperCase().split(/\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);
+  for(let i=0;i<lines.length;i++){
+    if(/\bCPF\b/.test(lines[i])){
+      let pool=lines.slice(i,Math.min(lines.length,i+3)).join(' ');
+      let cp=extractCpfAggressive(pool);
+      if(cp&&cpfValid(cp))return cp;
+    }
+  }
+  return extractCpfAggressive(text);
+}
+async function runCnhOCR(file){
+  let st=$('#cnhstatus');st.classList.remove('hidden');
+  let nativeText='',sources=[],pdf=null;
+  try{
+    if(file.type==='application/pdf'){
+      st.innerHTML='<b>📄 PDF RECEBIDO</b><br><small id="ocrprog">Procurando texto nativo no PDF...</small>';
+      let buf=await file.arrayBuffer();
+      pdf=await window.pdfjsLib.getDocument({data:buf}).promise;
+      nativeText=await pdfNativeText(pdf);
+      let parsed=parseCnhText(nativeText);
+      if(parsed.ok){
+        $('#driver').value=parsed.name.toUpperCase();$('#cpf').value=cpfFmt(parsed.cpf);
+        st.innerHTML='<b style="color:#176b2c">LEITURA CONCLUÍDA</b><br><small>Nome e CPF extraídos diretamente do PDF. Confira os campos abaixo.</small>';return;
+      }
+      let page=await pdf.getPage(1),vp=page.getViewport({scale:4});
+      let canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+      canvas.width=Math.ceil(vp.width);canvas.height=Math.ceil(vp.height);
+      await page.render({canvasContext:ctx,viewport:vp}).promise;
+      let im=$('#cnhpreview img');if(im){im.classList.remove('hidden');im.src=canvas.toDataURL('image/jpeg',0.9)}
+      // Exact front-card extraction calibrated from the supplied SENATRAN PDF.
+      let front=detectDigitalCnhFront(canvas);
+      sources.push(front);
+      // Keep the full page only as CPF fallback; never use it to infer Nome.
+      sources.push(enhanceCanvas(canvas));
+    }else{
+      let bmp=await createImageBitmap(file),c=document.createElement('canvas'),ctx=c.getContext('2d');
+      let max=3000,scale=Math.min(1,max/Math.max(bmp.width,bmp.height));
+      c.width=Math.round(bmp.width*scale);c.height=Math.round(bmp.height*scale);ctx.drawImage(bmp,0,0,c.width,c.height);
+      // Mobile-photo pipeline:
+      // 1) full image, 2) detected/document-like central region, 3) upper identification region.
+      let full=enhanceCanvas(c);
+      let doc=cropRel(c,.10,.19,.82,.66,2.0);
+      let ident=cropRel(doc,.12,.08,.82,.36,2.4);
+      sources=[ident,doc,full];
+    }
+  }catch(e){
+    st.innerHTML='<b style="color:#a40000">NÃO FOI POSSÍVEL PREPARAR O DOCUMENTO</b><br><small>Tente outra imagem/PDF ou preencha manualmente.</small>';return;
+  }
+  if(typeof Tesseract==='undefined'){
+    st.innerHTML='<b style="color:#a40000">OCR INDISPONÍVEL</b><br><small>Abra o protótipo com internet para carregar o motor OCR.</small>';return;
+  }
+  st.innerHTML='<b>LENDO CNH...</b><br><small id="ocrprog">Preparando OCR</small>';
+  let worker;
+  try{
+    worker=await Tesseract.createWorker('por',1,{logger:m=>{let e=$('#ocrprog');if(e&&m.progress!=null)e.textContent=(m.status||'OCR')+' · '+Math.round(m.progress*100)+'%'}});
+    let best={name:'',cpf:'',ok:false},combined=nativeText;
+    let e=$('#ocrprog');
+    if(file.type==='application/pdf'){
+      let card=sources[0],rois=cnhFixedRois(card);
+      let dbg=document.createElement('div');dbg.id='namedebug';dbg.style.marginTop='8px';
+      dbg.innerHTML='<small><b>CNH localizada automaticamente:</b></small><br>';
+      let cardimg=document.createElement('img');cardimg.src=card.toDataURL('image/jpeg',0.92);cardimg.style.maxWidth='100%';cardimg.style.maxHeight='170px';cardimg.style.border='1px solid #ccc';cardimg.style.borderRadius='6px';dbg.appendChild(cardimg);
+      let cap=document.createElement('div');cap.innerHTML='<small><b>Campo NOME enviado ao OCR:</b></small>';cap.style.marginTop='6px';dbg.appendChild(cap);
+      let dbgimg=document.createElement('img');dbgimg.src=rois.name.toDataURL('image/jpeg',0.96);dbgimg.style.maxWidth='100%';dbgimg.style.maxHeight='90px';dbgimg.style.border='1px solid #ccc';dbgimg.style.borderRadius='6px';dbg.appendChild(dbgimg);st.appendChild(dbg);
+      if(e)e.textContent='Lendo campo NOME na CNH localizada...';
+      let nameText=await recognizeWith(worker,rois.name);
+      best.name=extractNameFromNameRoi(nameText);
+
+      if(e)e.textContent='Lendo campo CPF com alta precisão...';
+      await worker.setParameters({tessedit_char_whitelist:'0123456789.-'});
+      let cpfText=await recognizeWith(worker,rois.cpf);
+      best.cpf=extractCpfAggressive(cpfText);
+      await worker.setParameters({tessedit_char_whitelist:''});
+
+      // Second pass over the complete CNH. This also captures the machine-readable
+      // name line present in newer digital CNH PDFs.
+      if(e)e.textContent='Confirmando dados na CNH completa...';
+      let cardText=await recognizeWith(worker,card);
+      combined+='\n'+cardText;
+      if(!best.name||!plausiblePersonName(best.name)){
+        best.name=extractMrzName(cardText)||extractPhysicalCnhName(cardText)||'';
+      }
+      if(!best.cpf||!cpfValid(best.cpf)){
+        best.cpf=extractCpfAggressive(cardText);
+      }
+
+      // Whole-page pass: MRZ is authoritative for the name whenever available.
+      // Visual ROI remains fallback only.
+      if(e)e.textContent='Validando nome pela zona legível por máquina...';
+      let fullText=await recognizeWith(worker,sources[1]);
+      combined+='\n'+fullText;
+      let mrzName=extractMrzName(fullText);
+      if(mrzName)best.name=mrzName;
+
+      if(!best.cpf||!cpfValid(best.cpf)){
+        if(e)e.textContent='Confirmando CPF na página completa...';
+        best.cpf=extractCpfAggressive(fullText);
+      }
+    }else{
+      // Photo: locate the printed "NOME E SOBRENOME" label first.
+      // The person's name is accepted only from a ROI geometrically anchored below that label.
+      for(let i=0;i<sources.length;i++){
+        if(e)e.textContent='Localizando “NOME E SOBRENOME” · etapa '+(i+1)+' de '+sources.length;
+        let data=await recognizeData(worker,sources[i]);combined+='\n'+(data.text||'');
+        let anchorBox=findNameAnchor(data);
+        if(anchorBox&&!best.name){
+          let nameRoi=roiBelowAnchor(sources[i],anchorBox);
+          if(e)e.textContent='Lendo somente o campo abaixo de “NOME E SOBRENOME”...';
+          let nameText=await recognizeWith(worker,nameRoi);
+          let nm=bestNameFromAnchoredRoi(nameText);
+          if(nm)best.name=nm;
+        }
+        let cp=extractPhysicalCnhCpf(data.text||'');
+        if(cp&&cpfValid(cp))best.cpf=cp;
+        if(best.name&&best.cpf)break;
+      }
+    }
+    best.name=sanitizePersonNameLine(best.name);best.ok=!!(plausiblePersonName(best.name)&&!/\d/.test(best.name)&&best.cpf&&cpfValid(best.cpf));
+    await worker.terminate();
+    if(best.name&&plausiblePersonName(best.name))$('#driver').value=best.name.toUpperCase();else $('#driver').value='';
+    if(best.cpf)$('#cpf').value=cpfFmt(best.cpf);
+    if(best.ok)st.innerHTML='<b style="color:#176b2c">LEITURA CONCLUÍDA</b><br><small>'+(file.type==='application/pdf'?'Nome identificado (priorizando MRZ quando disponível)':'Nome identificado no campo padronizado da CNH fotografada')+' e CPF validado matematicamente. Confira os campos abaixo.</small>';
+    else if(best.cpf&&cpfValid(best.cpf))st.innerHTML='<b style="color:#9a6500">CPF VALIDADO · NOME NÃO IDENTIFICADO</b><br><small>O CPF foi validado. O campo Nome não foi lido com segurança na região padronizada da CNH e foi deixado em branco.</small>';
+    else st.innerHTML='<b style="color:#9a6500">CONFERÊNCIA NECESSÁRIA</b><br><small>O documento foi analisado, mas Nome e CPF não foram identificados com segurança. Confira/corrija abaixo.</small>';
+  }catch(err){
+    if(worker)try{await worker.terminate()}catch(_){}
+    st.innerHTML='<b style="color:#a40000">NÃO FOI POSSÍVEL LER A CNH</b><br><small>Tente outra foto/PDF ou preencha Nome e CPF manualmente.</small>';
+  }
+}
+
+function vehiclePlateValid(x){
+  return /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test((x||'').replace(/[^A-Z0-9]/g,'').toUpperCase());
+}
+function cleanVehicleValue(x){
+  return (x||'').replace(/\s+/g,' ').replace(/^[^A-Z0-9]+|[^A-Z0-9À-Ú/ ._-]+$/gi,'').trim();
+}
+function extractCrlvFields(text){
+  let lines=(text||'').split(/\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);
+  let plate='',brandModel='';
+  for(let i=0;i<lines.length;i++){
+    let u=normAnchor(lines[i]);
+
+    if(!plate && /^PLACA(?: |$)/.test(u)){
+      let same=lines[i].replace(/^.*?PLACA\s*/i,'').trim();
+      let pool=[same,lines[i+1]||'',lines[i+2]||''].join(' ').toUpperCase();
+      let hits=pool.match(/\b[A-Z]{3}[- ]?[0-9][A-Z0-9][0-9]{2}\b/g)||[];
+      plate=(hits.find(vehiclePlateValid)||'').replace(/[^A-Z0-9]/g,'');
+    }
+
+    if(!brandModel && u.includes('MARCA') && u.includes('MODELO')){
+      let same=cleanVehicleValue(lines[i].replace(/^.*?MARCA\s*\/?\s*MODELO(?:\s*\/?\s*VERS[AÃ]O)?\s*/i,''));
+      let candidates=[same,lines[i+1]||'',lines[i+2]||''].map(cleanVehicleValue)
+        .filter(v=>v && !/ESP[EÉ]CIE|TIPO|PLACA|CHASSI|COR|COMBUST/i.test(v));
+      brandModel=candidates.find(v=>v.includes('/')) || candidates[0] || '';
+    }
+  }
+  if(!plate){
+    let all=(text||'').toUpperCase().match(/\b[A-Z]{3}[- ]?[0-9][A-Z0-9][0-9]{2}\b/g)||[];
+    plate=(all.find(vehiclePlateValid)||'').replace(/[^A-Z0-9]/g,'');
+  }
+  let brand='',model='';
+  if(brandModel.includes('/')){
+    let parts=brandModel.split('/');
+    brand=parts.shift().trim();
+    model=parts.join('/').trim();
+  }
+  return {plate,brandModel,brand,model};
+}
+async function pdfNativeTextForCrlv(pdf){
+  let pg=await pdf.getPage(1),tc=await pg.getTextContent();
+  // Preserve item order with line breaks; enough for anchor/value parsing on digital CRLV.
+  return tc.items.map(i=>i.str).filter(Boolean).join('\n');
+}
+async function runCrlvOCR(file){
+  let st=$('#crlvstatus'); if(!st)return; st.classList.remove('hidden');
+  st.innerHTML='<b>LENDO CRLV...</b><br><small>Localizando Placa e Marca / Modelo.</small>';
+  let f={plate:'',brandModel:'',brand:'',model:''},source=file;
+  try{
+    if(file.type==='application/pdf'){
+      let pdf=await window.pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+      let nativeText=await pdfNativeTextForCrlv(pdf);
+      f=extractCrlvFields(nativeText);
+
+      // Render only if native text did not resolve both target fields.
+      if(!f.plate||!f.brandModel){
+        let pg=await pdf.getPage(1),vp=pg.getViewport({scale:3.5});
+        let c=document.createElement('canvas'),cx=c.getContext('2d');
+        c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
+        await pg.render({canvasContext:cx,viewport:vp}).promise;source=c;
+      }
+    }
+
+    if((!f.plate||!f.brandModel)){
+      if(typeof Tesseract==='undefined'){
+        st.innerHTML='<b style="color:#a40000">OCR INDISPONÍVEL</b>';return;
+      }
+      let worker=await Tesseract.createWorker('por');
+      let txt=await recognizeWith(worker,source);await worker.terminate();
+      let o=extractCrlvFields(txt);
+      if(!f.plate)f.plate=o.plate;
+      if(!f.brandModel){f.brandModel=o.brandModel;f.brand=o.brand;f.model=o.model}
+    }
+
+    let plateEl=$('#plate');if(plateEl&&f.plate)plateEl.value=f.plate;
+
+    // One visual field; separate values remain available internally for ERP mapping.
+    let mm=$('#brandModel');
+    if(mm&&f.brandModel)mm.value=f.brandModel;
+    // Preserve the original internal state expected by the OS flow.
+    if(f.brand){brand=f.brand;$('#brandq').value=f.brand}
+    if(f.model){model=f.model;$('#modelq').value=f.model}
+
+    window.crlvExtracted={
+      plate:f.plate,
+      brandModel:f.brandModel,
+      marca:f.brand,
+      modelo:f.model
+    };
+
+    if(f.plate&&f.brandModel){
+      st.innerHTML='<b style="color:#176b2c">CRLV LIDO</b><br><small>Placa e Marca / Modelo identificados. Confira os dados abaixo.</small>';
+    }else if(f.plate||f.brandModel){
+      st.innerHTML='<b style="color:#9a6500">LEITURA PARCIAL</b><br><small>Parte dos dados foi identificada. Confira/corrija abaixo.</small>';
+    }else{
+      st.innerHTML='<b style="color:#9a6500">CONFERÊNCIA NECESSÁRIA</b><br><small>Não consegui identificar Placa e Marca / Modelo com segurança.</small>';
+    }
+  }catch(err){
+    st.innerHTML='<b style="color:#a40000">NÃO FOI POSSÍVEL LER O CRLV</b>';
+  }
+}
+['#crlvcam','#crlvfile'].forEach(sel=>{let el=$(sel);if(el)el.addEventListener('change',e=>{let f=e.target.files&&e.target.files[0];if(f)runCrlvOCR(f)})});
+['#cnhcam','#cnhfile'].forEach(id=>$(id).onchange=e=>{let f=showReceived(e.target,'#cnhpreview','#cnhfilename');if(f)runCnhOCR(f)});
+if($('#platecam'))$('#platecam').onchange=e=>{let f=showReceived(e.target,'#platepreview',null);if(f){let d=$('#platepreview .muted');if(d)d.textContent='✓ FOTO DA PLACA RECEBIDA · Confirme/corrija a placa abaixo.'}};
+
+
+
+
+
+function requestNumberFromText(text){
+  var t=String(text||'').replace(/[Oo]/g,'0').replace(/[Il|]/g,'1');
+  var nums=t.match(/\d{5,8}/g)||[];
+  var six=nums.filter(function(n){return n.length===6});
+  return six.length?six[0]:(nums.length?nums[0]:'');
+}
+async function imageSourceToCanvas(source){
+  var img;
+  if(source instanceof HTMLCanvasElement)return source;
+  if(source instanceof File){
+    img=new Image();
+    var url=URL.createObjectURL(source);
+    await new Promise(function(resolve,reject){
+      img.onload=resolve;img.onerror=reject;img.src=url;
+    });
+    URL.revokeObjectURL(url);
+  }else{
+    img=source;
+  }
+  var c=document.createElement('canvas');
+  c.width=img.naturalWidth||img.width;
+  c.height=img.naturalHeight||img.height;
+  c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  return c;
+}
+
+function redNumberCanvas(canvas){
+  var ctx=canvas.getContext('2d');
+  var im=ctx.getImageData(0,0,canvas.width,canvas.height);
+  var d=im.data,w=canvas.width,h=canvas.height;
+  var mask=new Uint8Array(w*h);
+
+  for(var y=0;y<h;y++){
+    for(var x=0;x<w;x++){
+      var i=(y*w+x)*4,r=d[i],g=d[i+1],b=d[i+2];
+      if(r>75 && r>g*1.22 && r>b*1.15 && (r-Math.max(g,b))>18)mask[y*w+x]=1;
+    }
+  }
+
+  var seen=new Uint8Array(w*h), comps=[];
+  var qx=new Int32Array(w*h),qy=new Int32Array(w*h);
+
+  for(var yy=0;yy<h;yy++){
+    for(var xx=0;xx<w;xx++){
+      var idx=yy*w+xx;
+      if(!mask[idx]||seen[idx])continue;
+
+      var head=0,tail=0,area=0,minX=xx,maxX=xx,minY=yy,maxY=yy;
+      qx[tail]=xx;qy[tail]=yy;tail++;seen[idx]=1;
+
+      while(head<tail){
+        var cx=qx[head],cy=qy[head];head++;area++;
+        if(cx<minX)minX=cx;if(cx>maxX)maxX=cx;
+        if(cy<minY)minY=cy;if(cy>maxY)maxY=cy;
+
+        for(var oy=-1;oy<=1;oy++){
+          for(var ox=-1;ox<=1;ox++){
+            if(!ox&&!oy)continue;
+            var nx=cx+ox,ny=cy+oy;
+            if(nx<0||ny<0||nx>=w||ny>=h)continue;
+            var ni=ny*w+nx;
+            if(mask[ni]&&!seen[ni]){
+              seen[ni]=1;qx[tail]=nx;qy[tail]=ny;tail++;
+            }
+          }
+        }
+      }
+      var bw=maxX-minX+1,bh=maxY-minY+1;
+      if(area>=35 && bw>=5 && bh>=5 && bw<=Math.max(140,w*.18) && bh<=Math.max(140,h*.18)){
+        comps.push({area:area,minX:minX,maxX:maxX,minY:minY,maxY:maxY,w:bw,h:bh,cx:(minX+maxX)/2,cy:(minY+maxY)/2});
+      }
+    }
+  }
+
+  if(comps.length<5)return null;
+
+  // Neste modelo cada algarismo vermelho forma um componente forte.
+  // Os 6 maiores componentes são os seis dígitos 136403.
+  comps.sort(function(a,b){return b.area-a.area});
+  var digits=comps.slice(0,Math.min(6,comps.length));
+  if(digits.length<5)return null;
+
+  var minX=w,minY=h,maxX=0,maxY=0;
+  digits.forEach(function(c){
+    minX=Math.min(minX,c.minX);maxX=Math.max(maxX,c.maxX);
+    minY=Math.min(minY,c.minY);maxY=Math.max(maxY,c.maxY);
+  });
+
+  var bw=maxX-minX+1,bh=maxY-minY+1;
+  var padX=Math.max(18,Math.round(bw*.35));
+  var padY=Math.max(18,Math.round(bh*.12));
+  minX=Math.max(0,minX-padX);maxX=Math.min(w-1,maxX+padX);
+  minY=Math.max(0,minY-padY);maxY=Math.min(h-1,maxY+padY);
+  bw=maxX-minX+1;bh=maxY-minY+1;
+
+  var raw=document.createElement('canvas');
+  raw.width=bw;raw.height=bh;
+  raw.getContext('2d').drawImage(canvas,minX,minY,bw,bh,0,0,bw,bh);
+
+  // Se os dígitos estão empilhados verticalmente, gira para leitura horizontal.
+  var oriented=document.createElement('canvas');
+  if(bh>bw*1.35){
+    oriented.width=bh;oriented.height=bw;
+    var octx=oriented.getContext('2d');
+    octx.translate(oriented.width/2,oriented.height/2);
+    octx.rotate(Math.PI/2);
+    octx.drawImage(raw,-raw.width/2,-raw.height/2);
+  }else{
+    oriented.width=bw;oriented.height=bh;
+    oriented.getContext('2d').drawImage(raw,0,0);
+  }
+
+  // Amplia e deixa apenas vermelho em preto sobre branco.
+  var scale=Math.max(3,Math.min(6,Math.round(1200/Math.max(oriented.width,oriented.height))));
+  var out=document.createElement('canvas');
+  out.width=oriented.width*scale;out.height=oriented.height*scale;
+  var o=out.getContext('2d');
+  o.imageSmoothingEnabled=true;
+  o.drawImage(oriented,0,0,out.width,out.height);
+
+  var oi=o.getImageData(0,0,out.width,out.height),od=oi.data;
+  for(var j=0;j<od.length;j+=4){
+    var rr=od[j],gg=od[j+1],bb=od[j+2];
+    var red=rr>70 && rr>gg*1.18 && rr>bb*1.12 && (rr-Math.max(gg,bb))>15;
+    var v=red?0:255;
+    od[j]=od[j+1]=od[j+2]=v;od[j+3]=255;
+  }
+  o.putImageData(oi,0,0);
+  return out;
+}
+
+
+function normalizeWholeRequestImage(canvas){
+  // Regra operacional validada com o formulário real:
+  // a requisição deve chegar ao leitor em orientação paisagem.
+  // Se a foto vier em retrato, normalizamos a imagem inteira antes
+  // de procurar a impressão vermelha.
+  if(canvas.height > canvas.width){
+    return rotateRequestCanvas(canvas,90);
+  }
+  return canvas;
+}
+function rotateRequestCanvas(src,deg){
+  var c=document.createElement('canvas'),ctx=c.getContext('2d');
+  if(deg===90||deg===270){c.width=src.height;c.height=src.width}
+  else{c.width=src.width;c.height=src.height}
+  ctx.translate(c.width/2,c.height/2);
+  ctx.rotate(deg*Math.PI/180);
+  ctx.drawImage(src,-src.width/2,-src.height/2);
+  return c;
+}
+function exactSixDigits(text){
+  var clean=String(text||'').replace(/[Oo]/g,'0').replace(/[Il|]/g,'1');
+  var groups=clean.match(/\d+/g)||[];
+  for(var i=0;i<groups.length;i++){
+    if(groups[i].length===6)return groups[i];
+  }
+  var joined=groups.join('');
+  return joined.length===6?joined:'';
+}
+async function readRequest(file){
+  var st=document.getElementById('reqstatus');
+  var field=document.getElementById('clientos');
+  if(!file||!st||!field)return;
+
+  st.classList.remove('hidden');
+  st.innerHTML='<b>LENDO REQUISIÇÃO...</b><br><small>Isolando a impressão vermelha.</small>';
+  field.value='';
+
+  try{
+    var source=file;
+    if(file.type==='application/pdf'){
+      var pdf=await window.pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+      var pg=await pdf.getPage(1);
+      var vp=pg.getViewport({scale:4});
+      var pdfCanvas=document.createElement('canvas');
+      pdfCanvas.width=Math.ceil(vp.width);pdfCanvas.height=Math.ceil(vp.height);
+      await pg.render({canvasContext:pdfCanvas.getContext('2d'),viewport:vp}).promise;
+      source=pdfCanvas;
+    }
+
+    var full=await imageSourceToCanvas(source);
+
+    // v3.34: orientação é resolvida ANTES de qualquer análise do documento.
+    full=normalizeWholeRequestImage(full);
+
+    var redCrop=redNumberCanvas(full);
+    if(!redCrop){
+      st.innerHTML='<b style="color:#9a6500">NÚMERO VERMELHO NÃO LOCALIZADO</b><br><small>Digite manualmente ou tente outra foto.</small>';
+      return;
+    }
+    if(typeof Tesseract==='undefined')throw new Error('Tesseract indisponível');
+
+    var worker=await Tesseract.createWorker('eng');
+    await worker.setParameters({tessedit_char_whitelist:'0123456789'});
+
+    var rotations=[0,180];
+    var psms=['7','8','13'];
+    var found='',attempt=0,total=rotations.length*psms.length;
+
+    for(var r=0;r<rotations.length && !found;r++){
+      var variant=rotateRequestCanvas(redCrop,rotations[r]);
+      for(var p=0;p<psms.length && !found;p++){
+        attempt++;
+        st.innerHTML='<b>LENDO REQUISIÇÃO...</b><br><small>Testando orientação '+(r+1)+' de 2 · '+Math.round(attempt/total*100)+'%</small>';
+        await worker.setParameters({
+          tessedit_char_whitelist:'0123456789',
+          tessedit_pageseg_mode:psms[p]
+        });
+        var out=await worker.recognize(variant);
+        found=exactSixDigits(out&&out.data?out.data.text:'');
+      }
+    }
+    await worker.terminate();
+
+    if(found){
+      field.value=found;
+      st.innerHTML='<b style="color:#176b2c">REQUISIÇÃO LIDA</b><br><small>Nº '+found+' identificado na impressão vermelha. Confira abaixo.</small>';
+    }else{
+      st.innerHTML='<b style="color:#9a6500">NÚMERO VERMELHO NÃO IDENTIFICADO</b><br><small>A impressão vermelha foi isolada, mas nenhuma das leituras da imagem normalizada produziu exatamente 6 dígitos. Digite manualmente.</small>';
+    }
+  }catch(err){
+    console.error(err);
+    st.innerHTML='<b style="color:#a40000">NÃO FOI POSSÍVEL LER A REQUISIÇÃO</b><br><small>Tente outra foto/PDF ou digite o número manualmente.</small>';
+  }
+}
+
+function requestFileSelected(input){
+  var file=input.files&&input.files[0];
+  if(!file)return;
+  showReceived(input,'#ospreview','#osfilename');
+  readRequest(file);
+}
+function paymentOptions(selectedKey){
+  return D.paymentConditions.filter(x=>x.recebimento_imediato!==false).map(function(x){
+    return '<option value="'+x.key+'" '+(x.key===selectedKey?'selected':'')+'>'+x.label+'</option>';
+  }).join('');
+}
+function newPaymentPart(){
+  return {id:nextPaymentPartId++,key:'',value:0,validated:false,Id_CondPgtoERP:null,cashCode:null,proofName:'', proofDataUrl:null,proofError:'',proofAttached:false,proofRead:null};
+}
+function addPaymentPart(){
+  paymentParts.push(newPaymentPart());
+  renderPaymentParts();
+}
+function removePaymentPart(id){
+  paymentParts=paymentParts.filter(function(p){return String(p.id)!==String(id)});
+  if(cash() && paymentParts.length===0)paymentParts.push(newPaymentPart());
+  renderPaymentParts();
+}
+function getPaymentPart(id){
+  return paymentParts.find(function(p){return String(p.id)===String(id)});
+}
+function parseBRL(text){
+  var cleaned=String(text||'0').replace(/\./g,'').replace(',','.').replace(/[^\d.-]/g,'');
+  return Math.round((parseFloat(cleaned)||0)*100);
+}
+function formatBRL(centsValue){
+  return ((Number(centsValue)||0)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function paymentPartsTotal(){
+  return paymentParts.reduce(function(sum,p){return sum+(Number(p.value)||0)},0);
+}
+function paymentDistributionComplete(){
+  return cash() && paymentParts.length>0 &&
+    paymentParts.every(function(p){return p.key && Number(p.value)>0}) &&
+    (Math.abs(paymentPartsTotal()-totalCents())<=(systemConfig?.tolerance_cents??0)||(systemConfig?.actions.value??'REVIEW')!=='BLOCK');
+}
+function paymentNeedsProof(p){return !!p.key && p.key!=='DINHEIRO' && (systemConfig?.payments[p.key]?.proof ?? true)}
+function attachPaymentProof(id,input){
+  var p=getPaymentPart(id);
+  if(!p || !input.files || !input.files[0])return;
+  p.proofName=input.files[0].name;
+  p.proofAttached=true;
+  p.validated=true;
+  renderPaymentParts();
+}
+
+function proofExpectedConditionLabel(key){
+  var x=D.paymentConditions.find(function(c){return c.key===key});
+  return x?x.label:'';
+}
+function proofComparableCondition(v){
+  return String(v||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,'');
+}
+function proofValidationFor(p){
+  var r=p&&p.proofRead?p.proofRead:null;
+  var expected=proofExpectedConditionLabel(p&&p.key);
+  var creditMatch=!!(r&&proofComparableCondition(r.condition)==='CARTAOCREDITO'&&p&&(p.key==='CREDITO_1X'||p.key==='CREDITO_2X'));
+  var formOk=creditMatch||!!(r&&r.condition&&expected&&proofComparableCondition(r.condition)===proofComparableCondition(expected));
+  var valueOk=!!(r&&r.valueCents!==null&&r.valueCents!==undefined&&Math.abs(Number(r.valueCents)-Number(p.value))<=(systemConfig?.tolerance_cents??0));
+  var timeOk=false,timeDiff=null;
+  if(r&&r.timestamp&&osOpenedAt){
+    var tx=new Date(r.timestamp),os=new Date(osOpenedAt);
+    if(!isNaN(tx.getTime())&&!isNaN(os.getTime())){
+      timeDiff=Math.abs(os.getTime()-tx.getTime())/60000;
+      timeOk=timeDiff<=(systemConfig?.validity_minutes??30);
+    }
+  }
+  return {formOk:formOk,valueOk:valueOk,timeOk:timeOk,timeDiff:timeDiff,needsReview:(!formOk&&(systemConfig?.actions.method??'REVIEW')==='REVIEW')||(!valueOk&&(systemConfig?.actions.value??'REVIEW')==='REVIEW')||(!timeOk&&(systemConfig?.actions.time??'REVIEW')==='REVIEW')};
+}
+function proofValidationHtml(p){
+  if(!p||!p.proofAttached||!p.proofRead)return '';
+  var v=proofValidationFor(p);
+  function row(ok,label,detail){return '<div class="proof-check"><span class="proof-dot '+(ok?'green':'yellow')+'"></span><b>'+label+'</b>'+(detail?' — '+detail:'')+'</div>'}
+  var expected=proofExpectedConditionLabel(p.key)||'Não informada';
+  var formDetail=v.formOk?'compatível':'informado: '+expected+' / comprovante: '+(p.proofRead.condition||'não identificado');
+  var valueDetail=v.valueOk?'compatível':'informado: R$ '+formatBRL(p.value)+' / comprovante: '+(p.proofRead.valueText||'não identificado');
+  var timeDetail='';
+  if(v.timeDiff!==null){
+    const mins=Math.max(0,Math.round(v.timeDiff));
+    const days=Math.floor(mins/1440);
+    const hours=Math.floor((mins%1440)/60);
+    const minutes=mins%60;
+    const parts=[];
+    if(days)parts.push(days+' '+(days===1?'dia':'dias'));
+    if(hours)parts.push(hours+' '+(hours===1?'hora':'horas'));
+    if(minutes || !parts.length)parts.push(minutes+' '+(minutes===1?'minuto':'minutos'));
+    let human='';
+    if(parts.length===1)human=parts[0];
+    else if(parts.length===2)human=parts[0]+' e '+parts[1];
+    else human=parts[0]+', '+parts[1]+' e '+parts[2];
+    timeDetail=(v.timeOk?'dentro da janela':'fora da janela')+' ('+human+')';
+  }
+  else timeDetail='não foi possível comparar';
+  return '<div class="proof-validation"><div class="proof-validation-title">Validação do comprovante</div>'+row(v.formOk,'Forma de pagamento',formDetail)+row(v.valueOk,'Valor',valueDetail)+row(v.timeOk,'Tempo',timeDetail)+(v.needsReview?'<div class="proof-admin-review">REVISÃO ADMINISTRATIVA</div>':'<div style="margin-top:6px;font-weight:800;color:#17823b">✓ COMPROVANTE VALIDADO</div>')+'</div>';
+}
+function paymentFormChanged(el){
+  var p=getPaymentPart(el.dataset.payId);
+  if(!p)return;
+  p.key=el.value;
+  // O comprovante pertence à linha de pagamento, não à forma selecionada.
+  // Portanto, alterar a forma após anexar/ler o comprovante não deve apagá-lo.
+  // Dinheiro continua dependendo exclusivamente da validação administrativa.
+  if(p.key==='DINHEIRO')p.validated=false;
+  else p.validated=!!p.proofAttached;
+  renderPaymentParts();
+}
+
+function proofNormalizeText(text){return String(text||'').replace(/\r/g,'\n').replace(/[ \t]+/g,' ').replace(/\n{2,}/g,'\n').trim()}
+function extractProofCondition(text){
+  var t=proofNormalizeText(text).toUpperCase();
+  if(/D[ÉE]BITO|DEBITO|D.BITO/.test(t))return 'Cartão Débito';
+  if(/CR[ÉE]DITO|CREDITO/.test(t)){if(/\b2\s*X\b/.test(t)||/2\s*PARCEL/.test(t))return 'Cartão Crédito 2x';return 'Cartão Crédito 1x'}
+  if(/\bPIX\b/.test(t))return 'PIX';if(/\bDINHEIRO\b/.test(t))return 'Dinheiro';return '';
+}
+function extractProofValue(text){
+  var t=proofNormalizeText(text),m,v=[],r=/(?:VALOR|TOTAL|R\$)\s*[:\-]?\s*(?:R\$\s*)?(\d{1,6}(?:[.\s]\d{3})*[,.]\d{2})/gi;
+  while((m=r.exec(t))!==null)v.push(m[1]);if(!v.length){r=/\b(\d{1,6}(?:\.\d{3})*[,.]\d{2})\b/g;while((m=r.exec(t))!==null)v.push(m[1])}
+  if(!v.length)return {cents:null,text:''};var raw=v[v.length-1].replace(/\s/g,'').replace(/\./g,'').replace(',','.'),n=Number(raw);
+  return isFinite(n)?{cents:Math.round(n*100),text:n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}:{cents:null,text:''};
+}
+function extractProofTimestamp(text){
+  var t=proofNormalizeText(text),patterns=[/\b(\d{2})[\/.-](\d{2})[\/.-](\d{2,4})\s+(\d{2})[:h](\d{2})(?::(\d{2}))?\b/,/\b(\d{2})[\/.-](\d{2})[\/.-](\d{2,4})[^\d]{0,15}(\d{2})[:h](\d{2})(?::(\d{2}))?\b/];
+  for(var i=0;i<patterns.length;i++){var m=t.match(patterns[i]);if(m){var yy=+m[3];if(yy<100)yy+=2000;var p=n=>String(n).padStart(2,'0');var iso=yy+'-'+p(+m[2])+'-'+p(+m[1])+'T'+p(+m[4])+':'+p(+m[5])+':'+p(+(m[6]||0));return {iso:iso,text:p(+m[1])+'/'+p(+m[2])+'/'+yy+' '+p(+m[4])+':'+p(+m[5])+':'+p(+(m[6]||0))}}}
+  return {iso:'',text:''};
+}
+function proofCanvasFromImage(img,mode){
+  var maxW=1800,scale=Math.min(3,maxW/img.naturalWidth);scale=Math.max(scale,1.5),c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*scale);c.height=Math.round(img.naturalHeight*scale);var x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);if(mode==='original')return c;
+  var d=x.getImageData(0,0,c.width,c.height),a=d.data;for(var i=0;i<a.length;i+=4){var g=.299*a[i]+.587*a[i+1]+.114*a[i+2];if(mode==='gray')g=Math.max(0,Math.min(255,(g-128)*1.65+128));else if(mode==='binary')g=g>155?255:0;a[i]=a[i+1]=a[i+2]=g}x.putImageData(d,0,0);return c;
+}
+function proofScore(text){return (extractProofCondition(text)?5:0)+(extractProofValue(text).cents!==null?5:0)+(extractProofTimestamp(text).text?5:0)+Math.min(3,String(text||'').length/100)}
+function proofSurgicalTimestampCrop(img,variant){
+  var sx=Math.round(img.naturalWidth*.30),sy=Math.round(img.naturalHeight*.205),sw=Math.round(img.naturalWidth*.43),sh=Math.round(img.naturalHeight*.105),scale=6,c=document.createElement('canvas');c.width=sw*scale;c.height=sh*scale;var x=c.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(img,sx,sy,sw,sh,0,0,c.width,c.height);var d=x.getImageData(0,0,c.width,c.height),a=d.data;
+  for(var i=0;i<a.length;i+=4){var g=.299*a[i]+.587*a[i+1]+.114*a[i+2];if(variant==='contrast')g=Math.max(0,Math.min(255,(g-128)*2.2+128));else if(variant==='binary')g=g>155?255:0;a[i]=a[i+1]=a[i+2]=g}x.putImageData(d,0,0);return c;
+}
+function proofNormalizeTimestampCandidate(raw){var t=String(raw||'').toUpperCase().trim();t=t.replace(/[OQ]/g,'0').replace(/[IL|]/g,'1').replace(/S/g,'5');return t.replace(/\bPZ(?=[\/.\-])/g,'02').replace(/\bP2(?=[\/.\-])/g,'02').replace(/\bOZ(?=[\/.\-])/g,'02').replace(/\b0Z(?=[\/.\-])/g,'02').replace(/Z/g,'2')}
+function proofTimestampCandidate(text){var t=proofNormalizeTimestampCandidate(text),m=t.match(/(\d{2})\D{1,3}(\d{2})\D{1,3}(\d{2,4})\s+(\d{2})\D{1,3}(\d{2})\D{1,3}(\d{2})/);return m?{dd:m[1],mm:m[2],yy:m[3],hh:m[4],mi:m[5],ss:m[6]}:null}
+function proofValidTimestamp(p){if(!p)return false;var dd=+p.dd,mm=+p.mm,yy=+p.yy,hh=+p.hh,mi=+p.mi,ss=+p.ss;if(yy<100)yy+=2000;return dd>=1&&dd<=31&&mm>=1&&mm<=12&&yy>=2020&&yy<=2099&&hh<=23&&mi<=59&&ss<=59}
+function proofFormatTimestamp(p){if(!proofValidTimestamp(p))return '';var yy=+p.yy;if(yy<100)yy+=2000;var z=n=>String(n).padStart(2,'0');return z(+p.dd)+'/'+z(+p.mm)+'/'+yy+' '+z(+p.hh)+':'+z(+p.mi)+':'+z(+p.ss)}
+async function proofSurgicalTimestampOCR(img,globalTexts){
+  var candidates=[];(globalTexts||[]).forEach(tx=>{var c=proofTimestampCandidate(tx);if(c)candidates.push(c)});for(var i=0;i<3;i++){var variant=['plain','contrast','binary'][i],out=await Tesseract.recognize(proofSurgicalTimestampCrop(img,variant),'eng',{tessedit_pageseg_mode:7,tessedit_char_whitelist:'0123456789/:.- pzPZOQILSz'}),c=proofTimestampCandidate((out&&out.data&&out.data.text)||'');if(c)candidates.push(c)}
+  var valid=candidates.filter(proofValidTimestamp),counts={};valid.forEach(p=>{var k=p.dd+'/'+p.mm+'/'+p.yy.slice(-2)+' '+p.hh+':'+p.mi+':'+p.ss;counts[k]=(counts[k]||0)+1});var ranked=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);if(!ranked.length)return '';
+  var m=ranked[0].match(/(\d{2})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2}):(\d{2})/);return proofFormatTimestamp({dd:m[1],mm:m[2],yy:m[3],hh:m[4],mi:m[5],ss:m[6]});
+}
+function extractProofTransactionId(text,condition){
+  var raw=String(text||'').toUpperCase(),lines=raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(condition==='PIX'){for(var i=0;i<lines.length;i++){if(/ID\s*\/?\s*TRANS/.test(lines[i])){var after=lines[i].replace(/^.*?ID\s*\/?\s*TRANS[A-ZÇÃAO0-9]*\s*[:\-]?\s*/,'').replace(/\D/g,'');if(after.length>=15)return after;for(var j=i+1;j<Math.min(lines.length,i+3);j++){var digits=lines[j].replace(/\D/g,'');if(digits.length>=15)return digits}}}var longIds=raw.match(/\b\d{20,40}\b/g)||[];return longIds.length?longIds.sort((a,b)=>b.length-a.length)[0]:''}
+  var m=raw.match(/\bAUT\s*[:;\-]?\s*([A-Z0-9]{4,12})\b/);if(m)return m[1];for(var k=0;k<lines.length;k++){var pos=lines[k].search(/\bAUT\b/);if(pos>=0){var c=lines[k].slice(pos+3).match(/[A-Z0-9]{4,12}/);if(c)return c[0]}}return '';
+}
+async function proofFileToImage(file){
+  if(file.type==='application/pdf'){var pdf=await window.pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise,pg=await pdf.getPage(1),vp=pg.getViewport({scale:3}),c=document.createElement('canvas');c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;return c}
+  var url=URL.createObjectURL(file),img=new Image();img.src=url;await img.decode();URL.revokeObjectURL(url);return img;
+}
+async function proofFileToDataUrl(file){
+  if(file.type==='application/pdf'){
+    var img=await proofFileToImage(file);
+    var canvas=document.createElement('canvas');
+    canvas.width=img.width;canvas.height=img.height;
+    canvas.getContext('2d').drawImage(img,0,0);
+    return canvas.toDataURL('image/png');
+  }
+  return await new Promise(function(resolve,reject){
+    var reader=new FileReader();reader.onload=function(){resolve(reader.result)};
+    reader.onerror=function(){reject(new Error('Não foi possível abrir o comprovante'))};
+    reader.readAsDataURL(file);
+  });
+}
+function proofDateText(iso){
+  if(!iso)return '';
+  var m=String(iso).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/);
+  return m?m[3]+'/'+m[2]+'/'+m[1]+' '+m[4]+':'+m[5]+':'+(m[6]||'00'):'';
+}
+async function readPaymentProof(part,file){
+  part.proofReading=true;part.proofError='';renderPaymentParts();
+  try{
+    var dataUrl=await proofFileToDataUrl(file);
+    part.proofDataUrl=dataUrl;
+    var response=null,answer=null,lastError=null;
+    for(var attempt=0;attempt<2;attempt++){
+      try{
+        response=await fetch(API_BASE+'/api/ler-comprovante',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({image:dataUrl})
+        });
+        answer=await response.json();
+        if(!response.ok||!answer||!answer.ok||!answer.resultado){
+          throw new Error((answer&&answer.erro)||('HTTP '+response.status));
+        }
+        break;
+      }catch(err){lastError=err;answer=null;}
+    }
+    if(!answer)throw lastError||new Error('Vision não respondeu');
+    var r=answer.resultado;
+    var condition=r.condicao||'';
+    var cents=(typeof r.valor==='number'&&Number.isFinite(r.valor))?Math.round(r.valor*100):null;
+    part.proofRead={condition:condition,valueCents:cents,
+      valueText:cents===null?'':('R$ '+formatBRL(cents)),
+      timestamp:r.data_hora||'',timestampText:proofDateText(r.data_hora),
+      transactionId:r.identificador_transacao||'',rawText:'Vision: '+(answer.modelo||'')};
+  }catch(err){
+    console.error('Erro no OpenAI Vision',err);
+    part.proofError='Falha de leitura Vision: '+(err&&err.message||String(err));
+    part.proofRead=null;
+  }finally{part.proofReading=false;renderPaymentParts()}
+}
+function paymentProofChanged(el){
+  attachPaymentProof(el.dataset.proofId,el);
+  var id=Number(el.dataset.proofId),p=paymentParts.find(function(x){return x.id===id}),f=el.files&&el.files[0];
+  if(p){p.proofRead=null;p.proofDataUrl=null;p.proofError='';if(f)readPaymentProof(p,f)}
+}
+function paymentValueFocus(el){
+  el.dataset.fresh='1';
+}
+function refreshPaymentProofValidation(payId){
+  var p=getPaymentPart(payId);
+  if(!p||!p.proofRead)return;
+  var row=document.querySelector('.pay-part[data-row-id=\"'+p.id+'\"]');
+  if(!row)return;
+  var current=row.querySelector('.proof-validation');
+  if(current)current.outerHTML=proofValidationHtml(p);
+}
+function paymentValueKey(ev,el){
+  if(['Tab','Shift','ArrowLeft','ArrowRight','Home','End'].indexOf(ev.key)>=0)return true;
+  if(ev.key==='Enter'){ev.preventDefault();el.blur();return false}
+  var p=getPaymentPart(el.dataset.payId);
+  if(!p)return true;
+
+  if(/^\d$/.test(ev.key)){
+    ev.preventDefault();
+    var integer=(el.value.split(',')[0]||'0').replace(/\D/g,'');
+    if(el.dataset.fresh==='1'||integer==='0')integer='';
+    integer=(integer+ev.key).replace(/^0+(?=\d)/,'');
+    var reais=parseInt(integer||'0',10)||0;
+    p.value=reais*100;
+    el.value=formatBRL(p.value);
+    el.dataset.fresh='0';
+    renderPaymentDistribution();
+    refreshPaymentProofValidation(p.id);
+    return false;
+  }
+  if(ev.key==='Backspace'||ev.key==='Delete'){
+    ev.preventDefault();
+    var integer2=(el.value.split(',')[0]||'0').replace(/\D/g,'');
+    integer2=integer2.slice(0,-1)||'0';
+    var reais2=parseInt(integer2,10)||0;
+    p.value=reais2*100;
+    el.value=formatBRL(p.value);
+    el.dataset.fresh='0';
+    renderPaymentDistribution();
+    refreshPaymentProofValidation(p.id);
+    return false;
+  }
+  ev.preventDefault();
+  return false;
+}
+function paymentValuePaste(ev,el){
+  ev.preventDefault();
+  var txt=(ev.clipboardData||window.clipboardData).getData('text');
+  var p=getPaymentPart(el.dataset.payId);
+  if(!p)return false;
+  p.value=parseBRL(txt);
+  el.value=formatBRL(p.value);
+  el.dataset.fresh='0';
+  renderPaymentDistribution();
+  refreshPaymentProofValidation(p.id);
+  return false;
+}
+function paymentValueBlur(el){
+  var p=getPaymentPart(el.dataset.payId);
+  el.value=formatBRL(p?p.value:0);
+  renderPaymentDistribution();
+  if(p)refreshPaymentProofValidation(p.id);
+}
+function renderPaymentParts(){
+  var box=document.getElementById('paymentParts');
+  if(!box)return;
+  if(cash() && paymentParts.length===0)paymentParts.push(newPaymentPart());
+
+  box.innerHTML=paymentParts.map(function(p){
+    var proof='';
+    if(p.key==='DINHEIRO' && !paymentNeedsProof(p)){
+      proof='<div class="pay-proof"><span class="pay-cash-note">Dinheiro · revisão administrativa obrigatória</span></div>';
+    }else if(p.key){
+      proof='<div class="pay-proof">'+
+        '<div class="pay-proof-actions">'+
+          '<button type="button" class="pay-proof-btn" onclick="document.getElementById(\'proofcam_'+p.id+'\').click()">Tirar foto</button>'+
+          '<button type="button" class="pay-proof-btn" onclick="document.getElementById(\'proof_'+p.id+'\').click()">Anexar</button>'+
+        '</div>'+
+        '<input id="proofcam_'+p.id+'" type="file" accept="image/*" capture="environment" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" onchange="paymentProofChanged(this)" data-proof-id="'+p.id+'">'+
+        '<input id="proof_'+p.id+'" type="file" accept="image/*,.pdf,application/pdf" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" onchange="paymentProofChanged(this)" data-proof-id="'+p.id+'">'+
+        '<span class="pay-proof-status '+(p.proofAttached?'ok':'pending')+'">'+
+        (p.proofReading?'Lendo comprovante...':(p.proofAttached?'✓ '+p.proofName:(paymentNeedsProof(p)?'Comprovante pendente':'Comprovante opcional')))+'</span>'+
+        (p.proofError?'<div class="proof-read-box" style="color:#b91c1c">'+p.proofError+'</div>':'')+
+        (p.proofRead?'<div class="proof-read-box">'+
+          '<div><b>Condição lida:</b> '+(p.proofRead.condition||'Não identificada')+'</div>'+
+          '<div><b>Valor lido:</b> '+(p.proofRead.valueText||'Não identificado')+'</div>'+
+          '<div><b>Data/hora:</b> '+(p.proofRead.timestampText||'Não identificada')+'</div>'+
+          '<div><b>ID da transação:</b> '+(p.proofRead.transactionId||'Não identificado')+'</div>'+
+        '</div>'+proofValidationHtml(p):'')+
+        '</div>';
+    }
+    if(p.key && !paymentNeedsProof(p) && !p.proofRead){
+      proof+='<div class="pay-proof"><label>Identificador da transação'+((systemConfig?.payments[p.key]?.identifier??(p.key!=="DINHEIRO"))?' (obrigatório)':' (opcional)')+'</label><input type="text" data-manual-id="'+p.id+'" oninput="getPaymentPart(Number(this.dataset.manualId)).manualIdentifier=this.value"></div>';
+    }
+    return '<div class="pay-part" data-row-id="'+p.id+'">'+
+      '<div><label>Forma</label><select class="pay-form" data-pay-id="'+p.id+'" onchange="paymentFormChanged(this)"><option value=""></option>'+paymentOptions(p.key)+'</select></div>'+
+      '<div><label>Valor</label><input class="pay-value-input" type="text" inputmode="numeric" value="'+formatBRL(p.value)+'" data-pay-id="'+p.id+'" onfocus="paymentValueFocus(this)" onkeydown="return paymentValueKey(event,this)" onpaste="return paymentValuePaste(event,this)" onblur="paymentValueBlur(this)"></div>'+
+      '<button type="button" class="pay-remove" title="Remover forma de pagamento" onclick="removePaymentPart(\''+p.id+'\')">×</button>'+
+      proof+
+      '</div>';
+  }).join('');
+
+  document.querySelectorAll('[data-manual-id]').forEach(el=>{el.value=getPaymentPart(Number(el.dataset.manualId))?.manualIdentifier||''});
+  renderPaymentDistribution();
+}
+function renderPaymentDistribution(){
+  var el=document.getElementById('paymentDistribution');
+  if(!el)return;
+  var total=totalCents(), got=paymentPartsTotal(), d=total-got;
+  var incomplete=paymentParts.some(function(p){return !p.key || Number(p.value)<=0});
+  var proofPending=paymentParts.some(function(p){return paymentNeedsProof(p) && !p.proofAttached});
+  var cashPending=paymentParts.some(function(p){return p.key==='DINHEIRO' && !p.validated});
+  var msg='';
+  if(d===0 && !incomplete)msg='Distribuição completa';
+  else if(d>0)msg='Faltam '+formatBRL(d).replace(/^/,'R$ ');
+  else if(d<0)msg='Excede '+formatBRL(-d).replace(/^/,'R$ ');
+  else msg='Preencha todas as condições';
+  if(d===0 && !incomplete && proofPending)msg+='<br>Há condição sem comprovante.';
+  if(d===0 && !incomplete && cashPending)msg+='<br>Dinheiro aguardará validação administrativa.';
+  el.innerHTML='<b>Total da OS:</b> '+formatBRL(total).replace(/^/,'R$ ')+
+    '<br><b>Total informado:</b> '+formatBRL(got).replace(/^/,'R$ ')+
+    '<br>'+msg;
+}
+function validatePaymentParts(){
+  paymentParts.forEach(function(p){
+    if(p.key==='DINHEIRO')p.validated=false;
+    else if(p.key)p.validated=!!p.proofAttached;
+  });
+}
+function assignCashCodes(osId){
+  paymentParts.forEach(function(p){if(p.key==='DINHEIRO')p.cashCode='DIN-'+osId});
+}
+function renderCashAdminQueue(){
+  var q=document.getElementById('cashAdminQueue');if(!q)return;
+  var rows=[];
+  hist.forEach(function(os){
+    (os.pagamentos||[]).forEach(function(p){
+      if(p.condicao_pagamento==='DINHEIRO'&&!p.validated)rows.push({os:os,p:p});
+    });
+  });
+  q.innerHTML=rows.length?rows.map(function(x){
+    return '<div class="check"><span style="flex:1"><b>'+x.p.cashCode+'</b> · '+x.os.p+
+      '<br><small>'+x.os.c+' · '+formatBRL(x.p.valor_centavos).replace(/^/,'R$ ')+'</small></span>'+
+      '<span class="document-status">Aguardando administração</span></div>';
+  }).join(''):'<span class="muted">Nenhum dinheiro pendente.</span>';
+}
+function adminValidateCash(code){showOperatorIssues([{message:'A confirmação de dinheiro deve ser feita na aplicação administrativa.'}]);}
+
+function getPaymentStatus(){
+  if(!cash())return 'NAO_PAGO';
+  validatePaymentParts();
+  return paymentDistributionComplete()&&paymentParts.every(p=>p.validated)?'PAGO':'NAO_PAGO';
+}
+function renderPaymentStatus(){
+  let st=getPaymentStatus(),b=$('#paymentStatusBadge');
+  if(!b)return st;
+  b.textContent=st==='PAGO'?'PAGO':'NÃO PAGO';
+  if(st==='PAGO'){b.style.background='#e7f6ea';b.style.color='#176b2c';b.style.border='1px solid #9bc9a5'}
+  else{b.style.background='#fde8e8';b.style.color='#a40000';b.style.border='1px solid #e2a3a3'}
+  return st;
+}
+renderServices();
+
+</script><script>
+
+async function loadSystemConfig(){
+  const response=await fetch('/api/parametros',{headers:{Authorization:'Bearer '+authToken}});
+  const data=await response.json();
+  if(!response.ok||!data.ok)throw Error(data.erro||'Falha ao carregar parâmetros');
+  const catalogResponse=await fetch('/api/catalogo/clientes',{headers:{Authorization:'Bearer '+authToken}});
+  const catalogData=await catalogResponse.json();
+  if(!catalogResponse.ok||!catalogData.ok||!Array.isArray(catalogData.clients))throw Error('Não foi possível atualizar o cadastro de Clientes.');
+  D.clients=catalogData.clients.filter(c=>c.ativo_erp!==false);
+  const productsResponse=await fetch('/api/catalogo/produtos',{headers:{Authorization:'Bearer '+authToken}});
+  const productsData=await productsResponse.json();
+  if(!productsResponse.ok||!productsData.ok||!Array.isArray(productsData.services))throw Error('Não foi possível carregar o cadastro local de serviços.');
+  D.services=productsData.services;
+  const paymentsResponse=await fetch('/api/catalogo/pagamentos',{headers:{Authorization:'Bearer '+authToken}});
+  const paymentsData=await paymentsResponse.json();
+  if(!paymentsResponse.ok||!paymentsData.ok||!Array.isArray(paymentsData.paymentConditions))throw Error('Não foi possível carregar as formas de pagamento.');
+  D.paymentConditions=paymentsData.paymentConditions;
+  const pricesResponse=await fetch('/api/catalogo/precos',{headers:{Authorization:'Bearer '+authToken}});
+  const pricesData=await pricesResponse.json();
+  if(!pricesResponse.ok||!pricesData.ok||!pricesData.prices)throw Error('Não foi possível carregar os preços do ERP.');
+  D.prices=pricesData.prices;
+  systemConfig=data.config;
+}
+const originalSetAuthenticated=setAuthenticated;
+setAuthenticated=function(...args){originalSetAuthenticated(...args);loadSystemConfig().then(()=>{if(selected.length)renderPrices()}).catch(e=>{$('#msg').textContent=e.message;});};
+const originalNewOS=$('#new').onclick;
+$('#new').onclick=async function(){try{await loadSystemConfig();originalNewOS();}catch(e){showOperatorNotice(e.message)}};
+</script><script src="parametros_operador_v3.js"></script><script src="vistoriador_interface_v4.js"></script></body></html>

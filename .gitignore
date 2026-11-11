@@ -1,0 +1,12 @@
+config.env
+.env
+.env.*
+!config.env.example
+*.db*
+*.sqlite*
+*.dpapi
+*.log
+__pycache__/
+comprovantes/
+work/
+bi_vendas/

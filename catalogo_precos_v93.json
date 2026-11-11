@@ -1,0 +1,32 @@
+{
+  "clients": [],
+  "services": [],
+  "prices": {},
+  "paymentConditions": [
+    {
+      "key": "PIX",
+      "label": "PIX",
+      "Id_CondPgtoERP": null
+    },
+    {
+      "key": "DEBITO",
+      "label": "Cartão Débito",
+      "Id_CondPgtoERP": null
+    },
+    {
+      "key": "CREDITO_1X",
+      "label": "Cartão Crédito 1X",
+      "Id_CondPgtoERP": null
+    },
+    {
+      "key": "CREDITO_2X",
+      "label": "Cartão Crédito 2X",
+      "Id_CondPgtoERP": null
+    },
+    {
+      "key": "DINHEIRO",
+      "label": "Dinheiro",
+      "Id_CondPgtoERP": null
+    }
+  ]
+}

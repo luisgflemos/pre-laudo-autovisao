@@ -1,0 +1,967 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Auto Visão — Administração</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f6f6;color:#181818;font-family:Segoe UI,Arial,sans-serif}.layout{display:flex;min-height:100vh}aside{width:245px;background:#111111;color:#f2f2f2;padding:25px 14px;flex-shrink:0}.brand{color:white;font-size:21px;font-weight:800;padding:0 12px 22px}.brand small{display:block;color:#e6a4a4;font-size:10px;letter-spacing:2px;margin-top:5px}.group{color:#d6d6d6;font-size:10px;letter-spacing:1.4px;margin:20px 12px 8px}.nav{display:block;width:100%;border:0;background:transparent;color:inherit;text-align:left;padding:12px;border-radius:8px;cursor:pointer}.nav:hover,.nav.active{background:#c8102e;color:white}.right{flex:1;min-width:0}header{height:70px;background:white;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;justify-content:space-between;padding:0 30px}header small{color:#666666}main{padding:30px;max-width:1400px}.page{display:none}.page.active{display:block}h1{margin:0 0 10px;font-size:26px}p{color:#5b5b5b;line-height:1.5}article{background:white;border:1px solid #e2e2e2;border-radius:12px;padding:22px;margin:16px 0}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stats article{margin:5px 0}.stats small{color:#6a6a6a}.blocks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.blocks article{margin:0}.field{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:13px 0;border-bottom:1px solid #ededed;font-size:13px}.field:last-child{border:0}.field small{display:block;color:#666666;margin-top:4px}.field input[type=number],select{padding:8px;width:135px;max-width:50%;border:1px solid #cccccc;border-radius:7px;background:white}.field input[type=checkbox]{width:19px;height:19px;accent-color:#c8102e}.btn{background:#fff0f2;border:0;border-radius:7px;color:#b00020;padding:9px 12px;cursor:pointer}input:not([type]){padding:10px;border:1px solid #cccccc;border-radius:8px}.notice{font-size:12px;color:#8f1528;background:#fff0f2;padding:12px;border-radius:8px;margin:15px 0}@media(max-width:1050px){.stats,.blocks{grid-template-columns:repeat(2,1fr)}}@media(max-width:680px){.layout{display:block}aside{width:100%;padding:12px}.group{display:none}.nav{width:auto;display:inline-block;padding:9px}.brand{padding:5px}.stats,.blocks{grid-template-columns:1fr}main{padding:18px}header{padding:0 18px}}
+
+/* Identidade visual Auto Visão: vermelho, branco e preto */
+.brand{border-bottom:2px solid #c8102e;margin-bottom:10px}
+.nav.active{box-shadow:inset 4px 0 0 #ffffff;font-weight:700}
+.nav:hover{background:#8e0b22}
+h1,h3{color:#171717}
+article{box-shadow:0 2px 9px rgba(0,0,0,.035)}
+article h3{border-left:4px solid #c8102e;padding-left:10px}
+header{border-top:4px solid #c8102e}
+.field input:focus,.field select:focus{outline:2px solid #c8102e;outline-offset:1px}
+.btn:hover{background:#c8102e;color:white}
+
+/* Cadastro de usuários */
+.user-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.user-field{display:flex;flex-direction:column;gap:6px}.user-field label{font-weight:650;font-size:12px}.user-field input,.user-field select{width:100%;max-width:none;padding:11px;border:1px solid #ccc;border-radius:8px;background:white;font:inherit}.user-field input:focus,.user-field select:focus{outline:2px solid #c8102e}.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}.primary{background:#c8102e;color:white;border:0;padding:11px 16px;border-radius:8px;cursor:pointer;font-weight:700}.primary:hover{background:#970d25}.secondary{background:white;border:1px solid #bbb;color:#222;padding:11px 16px;border-radius:8px;cursor:pointer}.tag{display:inline-block;background:#f1f1f1;border-radius:5px;padding:4px 8px;font-size:12px}.tag.on{background:#e7f5ec;color:#167442}.tag.off{background:#fce7e9;color:#a20f25}.user-table{width:100%;border-collapse:collapse;font-size:13px}.user-table th{text-align:left;background:#f5f5f5;padding:12px 10px}.user-table td{border-top:1px solid #eee;padding:12px 10px}.user-table button{border:0;background:#fff0f2;color:#aa0e29;padding:6px 10px;border-radius:6px;cursor:pointer}.hint{background:#fff5f5;border-left:4px solid #c8102e;padding:12px 14px;font-size:13px;color:#444;border-radius:6px}.feedback{font-size:13px;margin-top:12px;min-height:18px}.feedback.error{color:#b00020}.feedback.ok{color:#166c3a}.user-table-wrap{overflow-x:auto}@media(max-width:750px){.user-grid{grid-template-columns:1fr}}
+.password-wrap{position:relative}.password-wrap input{padding-right:47px}.eye-button{position:absolute;right:5px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#555;padding:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:6px}.eye-button:hover,.eye-button:focus-visible{background:#fff0f2;color:#c8102e}.password-help{font-size:12px;color:#666;grid-column:1/-1}
+dialog#editDialog{border:0;border-radius:13px;padding:25px;width:min(740px,calc(100vw - 24px));max-height:90vh;overflow:auto;box-shadow:0 20px 65px #0004}dialog#editDialog::backdrop{background:#0009}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:16px}.modal-head h2{margin:0}.modal-sub{color:#666;font-size:13px}.password-preserved{background:#f5f6f7;border-radius:8px;padding:13px;margin:20px 0}.password-preserved p{font-size:13px;margin:8px 0 12px}.password-preserved label{display:flex;align-items:center;gap:8px;font-weight:650}.password-preserved input{width:auto}#editPasswordFields[hidden]{display:none}#editPasswordFields{margin-top:14px}
+.rev-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.rev-tabs{display:flex;flex-wrap:wrap;gap:5px;background:#f4f4f4;padding:5px;border-radius:9px}.rev-tabs button{border:0;background:transparent;padding:10px 13px;border-radius:7px;cursor:pointer;font-weight:650}.rev-tabs button.selected{background:#c8102e;color:white}.rev-search input{width:100%;max-width:520px;padding:11px;border:1px solid #ccc;border-radius:8px;margin:15px 0}.rev-pending{background:#fff7e8}.rev-badge{display:inline-block;padding:5px 9px;border-radius:7px;font-size:12px;font-weight:700}.rev-badge.pending{background:#fff0c9;color:#7d4c00}.rev-badge.approved{background:#e5f4eb;color:#146c3b}.rev-badge.regular{background:#e9edf2;color:#455468}.rev-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.rev-detail-grid>div{background:#f7f7f7;border-radius:8px;padding:12px;overflow-wrap:anywhere}.rev-detail-grid small{display:block;color:#666;margin-bottom:5px}.rev-item{border-bottom:1px solid #ddd;padding:9px 0;overflow-wrap:anywhere}@media(max-width:680px){.rev-detail-grid{grid-template-columns:1fr}}
+.v9317-review{margin-top:12px;border:1px solid #e4e4e4;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;background:#fff}
+.v9317-review .rev-pay-grid{margin-top:2px}
+.v9317-review-note{font-size:13px;color:#934000;font-weight:600;margin:0}
+.v9319-finance{border:1px solid #d5dfe8;border-radius:10px;padding:16px;margin:14px 0;background:#fff}
+.v9319-finance h4{margin:0 0 12px;font-size:16px}
+.v9319-finance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.v9319-finance-grid>div{background:#f5f6f8;border-radius:8px;padding:12px}
+.v9319-finance-grid small{display:block;color:#64748b;margin-bottom:6px}
+.v9319-finance-grid strong{font-size:18px}
+.v9319-finance-alert{background:#fff1f2;border-left:4px solid #b00020;border-radius:6px;padding:12px;color:#991b1b;font-weight:600}
+.v9319-finance-ok{background:#edf7f0;border-left:4px solid #29834d;border-radius:6px;padding:12px;color:#22613d;font-weight:600}
+.v9319-proof-ok{color:#22613d;font-weight:650;margin:0}
+.v9319-proof-note{color:#7c4a03;font-weight:600;margin:0}
+@media(max-width:650px){.v9319-finance-grid{grid-template-columns:1fr}}
+.v9327-history{white-space:normal!important;padding:16px!important;margin:12px 0!important}
+.v9327-history-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.v9327-history-head span{color:#666}.v9327-history-table{width:100%;border-collapse:collapse}
+.v9327-history-table th,.v9327-history-table td{padding:9px;text-align:left;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}
+.v9327-history-table th:first-child{width:32%}.v9327-history-just{border-top:1px solid #ddd;margin-top:14px;padding-top:12px}
+.v9327-history-just strong{font-size:12px;color:#666}.v9327-history-just p{margin:7px 0}
+.v9328-release{background:#7C3AED!important;color:#fff!important;border:1px solid #6d28d9!important;font-weight:700}
+.rev-badge.v9328-purple{background:#ede9fe;color:#6d28d9;border-color:#c4b5fd}
+.rev-badge.v9328-failure{background:#fee2e2;color:#b91c1c;border-color:#fecaca}
+.rev-badge.v9328-synced{background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe}
+.v9330-release-banner{display:flex;justify-content:flex-end;margin:0 0 12px}
+.v9330-release-banner span{display:inline-flex;align-items:center;background:#7c3aed;color:white;border-radius:8px;padding:10px 14px;font-weight:700}
+.rev-alert.v9330-accepted{background:#f5f0ff;border-left-color:#7c3aed;color:#4c1d95}
+.rev-reasons.v9330-accepted-reasons{background:#f5f0ff;color:#5b21b6}
+#revFeedback.v9330-success{color:#167348;font-weight:600}
+.rev-badge.v9331-ready{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+.rev-badge.v9331-done{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.rev-badge.v9331-wait{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5}
+.v9334-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px;flex-wrap:nowrap;white-space:nowrap}
+.v9334-actions .btn{white-space:nowrap;padding:6px 9px;font-size:12px}
+.v9334-release{background:#7c3aed!important;border:1px solid #6d28d9!important;color:white!important;font-weight:700}
+.v9334-release:disabled{opacity:.6;cursor:wait}
+</style><style>
+.rev-alert{background:#fff1e5;border-left:4px solid #d97706;border-radius:8px;padding:16px;margin:16px 0}.rev-alert ul{margin:8px 0 0;padding-left:20px}.rev-ok{background:#ecf7ef;border-left:4px solid #18834b;padding:16px;border-radius:8px;margin:16px 0}.rev-doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.rev-pay-card{border:1px solid #dedede;border-radius:10px;padding:16px;margin:12px 0;background:#fff;display:flex;flex-direction:column;gap:12px}.rev-pay-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}.rev-pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.rev-pay-grid>div{background:#f7f7f7;padding:12px;border-radius:8px;overflow-wrap:anywhere}.rev-pay-grid small{display:block;color:#666;margin-bottom:5px}.rev-attachment{display:flex;flex-direction:column;align-items:flex-start;gap:9px}.rev-file{display:inline-block;background:#c8102e;color:white!important;padding:9px 13px;border-radius:7px;text-decoration:none;font-weight:700}.rev-proof{max-width:360px;max-height:280px;width:100%;object-fit:contain;border:1px solid #ddd;border-radius:8px}.rev-muted{color:#777;font-size:13px}.rev-reasons{color:#934000;background:#fff8e8;padding:12px 12px 12px 32px;border-radius:7px}@media(max-width:680px){.rev-pay-grid{grid-template-columns:1fr}}
+
+.v92-edit{margin-top:18px;border:1px solid #ddd;padding:20px;border-radius:12px;background:#fff}.v92-edit h3{margin-top:20px}.v92-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v92-grid label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:#444}.v92-grid input,.v92-edit textarea,.v92-edit select,.v92-edit input{padding:9px;border:1px solid #bbb;border-radius:7px;width:100%}.v92-line{display:grid;grid-template-columns:2fr 1fr auto;gap:8px;align-items:end;margin:8px 0}.v92-line button{padding:10px}.v92-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}.v92-actions button{padding:11px 16px;cursor:pointer}.v92-summary{background:#fff7e6;padding:12px;border-left:4px solid #d97706;margin:12px 0}.v92-muted{color:#666;font-size:12px}.v92-doc{border:1px solid #ddd;border-radius:8px;padding:10px;margin:6px 0}.v92-hist{white-space:pre-wrap;background:#f7f7f7;border-radius:8px;padding:10px;margin:8px 0}@media(max-width:700px){.v92-grid,.v92-line{grid-template-columns:1fr}}
+</style><style>
+/* v9.3.1 — Tela de acesso isolada das regras globais da Administração v8 */
+.admin-login-gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;background:#f3f4f6;font-family:Segoe UI,Arial,sans-serif;overflow-y:auto}
+.admin-login-card{display:block;width:100%;max-width:450px;background:#fff;border:1px solid #e4e5e8;border-top:5px solid #c8102e;border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,.10);padding:36px 38px 26px;color:#181818}
+.admin-login-brand{display:flex;align-items:center;gap:10px;font-weight:850;font-size:21px;letter-spacing:.2px;color:#141414;margin-bottom:34px}
+.admin-login-brand-mark{display:inline-block;width:8px;height:27px;background:#c8102e;border-radius:2px}
+.admin-login-brand small{font-size:10px;letter-spacing:1.6px;font-weight:750;color:#9c1830;margin-left:auto}
+.admin-login-card h1{font-size:25px;line-height:1.2;margin:0 0 10px;color:#151515}
+.admin-login-description{font-size:14px;line-height:1.55;color:#60656d;margin:0 0 27px}
+.admin-login-field{display:flex;flex-direction:column;align-items:stretch;gap:8px;margin-bottom:19px;width:100%}
+.admin-login-field label{display:block;font-size:13px;font-weight:650;color:#282b31}
+.admin-login-field input,.admin-login-field input:not([type]){display:block;width:100%;max-width:none;min-width:0;height:46px;padding:11px 13px;background:#fff;border:1px solid #cdd1d6;border-radius:8px;color:#171717;font:inherit;font-size:14px;box-sizing:border-box}
+.admin-login-field input:focus{outline:2px solid rgba(200,16,46,.2);outline-offset:1px;border-color:#c8102e}
+.admin-login-error{font-size:13px;color:#b00020;min-height:0;margin:0 0 10px;line-height:1.4}
+.admin-login-error:empty{display:none}
+.admin-login-submit{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:47px;background:#c8102e;border:0;border-radius:8px;color:#fff;font:inherit;font-size:14px;font-weight:750;cursor:pointer;transition:background .15s}
+.admin-login-submit:hover{background:#a00c25}
+.admin-login-submit:focus-visible{outline:3px solid #f0a2af;outline-offset:2px}
+.admin-login-foot{border-top:1px solid #ededed;margin-top:26px;padding-top:18px;text-align:center;font-size:11px;color:#737780}
+.admin-login-foot span{color:#c8102e;font-size:9px;margin-right:5px}
+@media(max-width:500px){.admin-login-gate{padding:15px}.admin-login-card{padding:28px 23px 23px}.admin-login-brand{font-size:19px;gap:7px}.admin-login-brand small{font-size:9px;letter-spacing:1px}.admin-login-card h1{font-size:23px}}
+</style><style id="v934-cards">.v934-doc-card{border:1px solid #ddd;border-radius:13px;padding:18px;margin:12px 0;background:#fff}.v934-doc-card>strong{display:block;font-size:16px;margin-bottom:12px}.v934-doc-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.v92-edit .v934-doc-actions button{padding:12px 10px;border-radius:8px;font-weight:700;cursor:pointer;min-height:43px}.v934-doc-actions .primary{background:#c8102e;color:white;border:1px solid #c8102e}.v934-doc-actions .secondary{background:white;color:#222;border:1px solid #bbb}.v934-doc-actions button:disabled{opacity:.5;cursor:not-allowed}.v92-edit input.v934-hidden-file{display:none}.v934-check{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px}.v92-edit .v934-check input{width:auto;min-width:17px;height:17px}#adminUserPanel93{margin:12px 0!important}@media(max-width:600px){.v934-doc-actions{grid-template-columns:1fr}}</style><style id="v935-fixes">
+.v935-file-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.v935-file-clear{border:1px solid #d8a1a8!important;background:#fff0f2!important;color:#a6001d!important;border-radius:7px!important;min-height:28px!important;width:30px!important;font-size:20px!important;line-height:1!important;padding:0!important;cursor:pointer}
+.v935-file-clear[hidden]{display:none!important}
+.v935-admin-panel{display:grid;gap:18px;margin:0!important;padding:0!important;border:0!important;background:transparent!important}
+.v935-admin-panel article{border:1px solid #ddd;border-radius:13px;background:#fff;padding:24px}
+.v935-admin-panel .user-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.v935-admin-panel .user-field label{display:block;margin:0 0 7px;font-size:13px;font-weight:700}
+.v935-admin-panel .user-field input,.v935-admin-panel .user-field select,.v935-admin-panel #adminSearch{width:100%;box-sizing:border-box;min-height:50px;border:1px solid #ccc;border-radius:9px;padding:12px;font-size:15px;background:white}
+.v935-form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px}
+.v935-form-actions button{border:1px solid #ccc;background:white;border-radius:9px;padding:13px 18px;cursor:pointer}
+.v935-form-actions .v935-save{background:#c8102e;color:#fff;border-color:#c8102e;font-weight:700}
+.v935-admin-table{width:100%;border-collapse:collapse;margin-top:16px;text-align:left}
+.v935-admin-table th{background:#f4f4f4;padding:16px 12px;font-size:13px}
+.v935-admin-table td{border-bottom:1px solid #eee;padding:14px 12px;font-size:14px}
+.v935-status-active{background:#e5f5e9;color:#176c34;border-radius:5px;padding:6px 9px}
+.v935-status-blocked{background:#ffe6e6;color:#a71d2a;border-radius:5px;padding:6px 9px}
+.v935-edit{background:#fff0f2;color:#b00020;border:0;border-radius:7px;padding:9px 14px;cursor:pointer}
+@media(max-width:680px){.v935-admin-panel .user-grid{grid-template-columns:1fr}.v935-admin-table{display:block;overflow-x:auto}}
+</style><style id="v937-admin-dialog">
+dialog.v937-dialog{border:0;border-radius:13px;padding:25px;width:min(740px,calc(100vw - 24px));max-height:90vh;overflow:auto;box-shadow:0 20px 65px #0004}
+dialog.v937-dialog::backdrop{background:#0009}
+.v937-dialog .user-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.v937-dialog .user-field label{display:block;font-size:13px;font-weight:700;margin:0 0 7px}
+.v937-dialog .user-field input,.v937-dialog .user-field select{width:100%;min-height:48px;border:1px solid #ccc;border-radius:9px;padding:10px;box-sizing:border-box}
+.v937-dialog .password-preserved{background:#f5f6f7;border-radius:8px;padding:13px;margin:20px 0}
+.v937-dialog .password-preserved label{display:flex;align-items:center;gap:8px}
+.v937-dialog .password-preserved input{width:auto}
+.v937-dialog #adminEditPasswordFields[hidden]{display:none}
+.v937-dialog .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.v937-dialog .actions button{padding:12px 16px;border-radius:8px;cursor:pointer}
+.v937-dialog .actions .primary{background:#c8102e;color:#fff;border:1px solid #c8102e}
+.v937-dialog .actions .secondary{background:#fff;border:1px solid #ccc}
+.v937-dialog #adminEditFeedback{color:#b00020;margin-top:10px}
+@media(max-width:600px){.v937-dialog .user-grid{grid-template-columns:1fr}}
+</style><style>
+/* v9.3.18: edição isolada e diferenciação visual dos totais */
+dialog#v9318OsDialog{border:0;border-radius:14px;padding:0;width:min(1300px,calc(100vw - 32px));max-width:none;max-height:94vh;overflow:hidden;box-shadow:0 24px 75px #0006;background:#fff}
+dialog#v9318OsDialog::backdrop{background:rgba(12,16,22,.72)}
+.v9318-modal-shell{display:flex;flex-direction:column;max-height:94vh;min-height:0}
+.v9318-modal-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:17px 24px;border-bottom:1px solid #e4e4e4;flex:none;background:white}
+.v9318-modal-head h2{font-size:21px;margin:0}
+.v9318-modal-body{padding:4px 24px 24px;overflow-y:auto;overscroll-behavior:contain;min-height:0}
+#v9318OsDialog .v92-edit{border:0;margin:0;padding:0;box-shadow:none}
+#v9318OsDialog .v92-actions{position:sticky;bottom:0;background:#fff;padding:14px 0;border-top:1px solid #e5e5e5;z-index:2}
+.v92-summary{background:#eaf1f8!important;border-left:4px solid #477496!important;color:#17374e}
+.v9318-diff{color:#b00020!important;font-weight:800}
+@media(max-width:680px){.v9318-modal-head{padding:12px 16px}.v9318-modal-body{padding:4px 14px 16px}dialog#v9318OsDialog{width:calc(100vw - 12px);max-height:97vh}.v9318-modal-shell{max-height:97vh}}
+</style><link rel="stylesheet" href="parametros_layout_v2.css"><link rel="stylesheet" href="administracao_padrao.css"><script src="precos_compartilhados.js"></script></head><body><div id="adminGate" class="admin-login-gate">
+  <section class="admin-login-card" aria-labelledby="adminLoginTitle">
+    <div class="admin-login-brand"><span class="admin-login-brand-mark"></span><span>AUTO VISÃO</span><small>ADMINISTRAÇÃO</small></div>
+    <h1 id="adminLoginTitle">Acesso administrativo</h1>
+    <p class="admin-login-description">Entre com suas credenciais de administrador para acessar a Camada Intermediária.</p>
+    <form id="adminLoginForm" onsubmit="event.preventDefault();adminEnter()">
+      <div class="admin-login-field"><label for="admLogin">Usuário administrativo</label><input id="admLogin" name="username" type="text" autocomplete="username" placeholder="Digite seu usuário" required spellcheck="false"></div>
+      <div class="admin-login-field"><label for="admSenha">Senha</label><input id="admSenha" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required></div>
+      <p id="admLoginError" class="admin-login-error" role="alert" aria-live="polite"></p>
+      <button type="submit" class="admin-login-submit">Entrar na Administração <span aria-hidden="true">→</span></button>
+    </form>
+    <div class="admin-login-foot"><span aria-hidden="true">●</span> Acesso restrito a usuários administrativos</div>
+  </section>
+</div><div class="layout"><aside><div class="brand">AUTO VISÃO<small>CAMADA INTERMEDIÁRIA</small></div><div class="group">VISÃO GERAL</div><button class="nav" onclick="go(this)" data-page="Painel">Painel</button><div class="group">PARAMETRIZAÇÕES</div><button class="nav" onclick="go(this)" data-page="Parametrizações">Parametrizações</button><div class="group">CONFERÊNCIA / INTEGRAÇÃO</div><button class="nav" onclick="go(this)" data-page="Ordens de serviço">Ordens de serviço</button><button class="nav" onclick="go(this)" data-page="Revisão administrativa">Revisão administrativa</button><button class="nav" onclick="go(this)" data-page="Integração ERP">Integração ERP</button><button class="nav" onclick="go(this)" data-page="Histórico">Histórico</button><div class="group">CADASTRO</div><button class="nav" onclick="go(this)" data-page="Vistoriadores por Unidade">Vistoriadores por Unidade</button><button class="nav" onclick="go(this)" data-page="Administradores">Administradores</button></aside><div class="right"><header><b id="heading">Painel</b><small>v9.3.46 · Revisão administrativa (edição auditada)</small></header><main><section class="page" data-name="Painel"><h1>Painel administrativo</h1><p>Visão geral da Camada Intermediária.</p><div class="stats"><article><small>OS recebidas</small><h1>—</h1><small>Aguardando SQLite</small></article><article><small>Revisão administrativa</small><h1>—</h1></article><article><small>Liberadas para ERP</small><h1>—</h1></article><article><small>Falhas de integração</small><h1>—</h1></article></div><article><h3>Fluxo aprovado</h3><p>Pré-Laudo → Recebimento → Revisão ou Liberação → Integração ERP</p><p>Bloquear envio: a OS permanece no celular. Revisão: retida até aprovação. Liberar: disponível para integração.</p></article></section><section class="page" data-name="Parametrizações"><h1>Parametrizações</h1><p class="param-intro">Defina as exigências e os tratamentos aplicados às novas ordens de serviço.</p><form id="parameterForm"><div class="param-toolbar"><div class="param-toolbar-copy"><strong>Configurações do sistema</strong><div id="parameterStatus" role="status" aria-live="polite">Selecione Parametrizações para carregar.</div></div><div class="param-toolbar-actions"><button class="param-reload" type="button" onclick="loadParameters()">Recarregar</button><button class="param-save" id="saveParameters" type="submit">Salvar parametrizações</button></div></div><div id="parameterFields"></div></form></section><section class="page" data-name="Ordens de serviço"><h1>Ordens de serviço</h1><p>Consulta e filtros das OS recebidas.</p><article><input placeholder="Buscar por OS, cliente ou placa" disabled><p>Nenhum registro carregado. Conexão com SQLite pendente.</p></article></section><section class="page" data-name="Revisão administrativa"><h1>Revisão administrativa</h1><p>Consulta das OS recebidas no SQLite. Registros com divergência são destacados. Edição com justificativa e histórico de alterações.</p><article><div class="rev-toolbar"><div class="rev-tabs" role="group" aria-label="Filtrar por situação"><button type="button" class="selected" data-rev-filter="todas" onclick="setRevFilter('todas')">Todas <span id="revCountAll"></span></button><button type="button" data-rev-filter="pendentes" onclick="setRevFilter('pendentes')">Pendentes <span id="revCountPending"></span></button><button type="button" data-rev-filter="aguardando_liberacao" onclick="setRevFilter('aguardando_liberacao')">Aguardando liberação <span id="revCountReady"></span></button><button type="button" data-rev-filter="aprovadas" onclick="setRevFilter('aprovadas')">Aprovadas <span id="revCountApproved"></span></button></div><button type="button" class="secondary" onclick="loadReview()">Atualizar</button></div><div class="rev-search"><input id="revSearch" placeholder="Buscar OS, cliente, placa, unidade ou vistoriador" oninput="renderReview()" aria-label="Pesquisar OS"></div><div id="revFeedback" class="feedback" role="status">Carregando OS...</div><div class="user-table-wrap"><table class="user-table"><thead><tr><th>OS</th><th>Recebimento</th><th>Cliente / placa</th><th>Unidade / vistoriador</th><th>Valor</th><th>Situação</th><th>Análise administrativa</th><th></th></tr></thead><tbody id="revRows"></tbody></table></div></article><article id="revDetail" hidden><h3>Detalhamento da OS</h3><div id="revDetailContent"></div></article><p><small>OS sem pendências são liberadas automaticamente. OS com pendências seguem o fluxo de justificativas e liberação administrativa.</small></p></section><section class="page" data-name="Administradores"><h1>Administradores</h1><div id="adminUsersMount"></div></section><section class="page" data-name="Integração ERP"><h1>Integração ERP</h1><p>Fila de OS liberadas, tentativas e retornos.</p><article><h3>Integração</h3><p>Sincronização de cadastros, envio manual/automático e reenvio conforme parâmetros.</p><p>Proteção contra duplicidade será regra fixa.</p></article></section><section class="page" data-name="Histórico"><h1>Histórico e rastreabilidade</h1><article>Auditoria de aprovações, correções e integrações — a implementar.</article></section><section class="page" data-name="Vistoriadores por Unidade"><h1>Vistoriadores por Unidade</h1><p>Vistoriadores ativos importados do ERP. Cada acesso pertence a uma unidade de trabalho, definida aqui pela administração.</p>
+<div class="hint"><b>Regra de negócio 1:1:</b> cada usuário de vistoriador pertence a uma única unidade. No celular, a unidade será identificada pelo login e não poderá ser escolhida ou alterada. Os vistoriadores vêm da importação do ERP; o vínculo com a unidade é administrado nesta tela.</div>
+<article><h3>Criar usuário</h3><form id="userForm" onsubmit="saveUserDB(event)"><div class="user-grid">
+<div class="user-field"><label for="vistor">Vistoriador (base ERP do Pré-Laudo) *</label><select id="vistor" required onchange="suggestLogin()"><option value="">Carregando vistoriadores...</option></select></div>
+<div class="user-field"><label for="unit">Unidade (base ERP do Pré-Laudo) *</label><select id="unit" required><option value="">Carregando unidades...</option></select></div>
+<div class="user-field"><label for="username">Usuário de acesso *</label><input id="username" autocomplete="off" required maxlength="60" placeholder="Ex.: joao.silva"></div>
+
+<div class="user-field"><label for="access">Situação do acesso</label><select id="access"><option value="ativo">Ativo</option><option value="bloqueado">Bloqueado</option></select></div>
+<div class="user-field"><label for="password">Senha <span id="passwordRequired">*</span></label><div class="password-wrap"><input id="password" type="password" autocomplete="new-password" minlength="8" required placeholder="Mínimo de 8 caracteres"><button class="eye-button" type="button" tabindex="-1" onclick="togglePassword('password',this)" aria-label="Mostrar senha" title="Mostrar senha"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+<div class="user-field"><label for="confirmPassword">Confirmar senha <span id="confirmRequired">*</span></label><div class="password-wrap"><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Repita a senha"><button class="eye-button" type="button" tabindex="-1" onclick="togglePassword('confirmPassword',this)" aria-label="Mostrar confirmação de senha" title="Mostrar confirmação de senha"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+<div class="user-field password-help">Senha obrigatória no cadastro. Armazenamento seguro por hash no SQLite.</div>
+</div><div class="actions"><button type="button" class="secondary" onclick="resetUserForm()">Limpar</button><button type="submit" class="primary" id="saveUserButton">Salvar usuário</button></div><div id="userFeedback" class="feedback" role="status"></div></form></article>
+<article><h3>Usuários cadastrados no banco</h3><div class="user-field" style="margin-bottom:14px"><label for="searchUser">Pesquisar</label><input id="searchUser" placeholder="Buscar por usuário, vistoriador ou unidade" oninput="renderUsers()"></div><div class="user-table-wrap"><table class="user-table"><thead><tr><th>Usuário</th><th>Vistoriador</th><th>Unidade vinculada</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="userRows"><tr><td colspan="5">Nenhum usuário cadastrado.</td></tr></tbody></table></div></article>
+<article><h3>Atualização do cadastro</h3><p>A lista é atualizada diariamente às 03:30. Para atualizar antes, use Integração ERP. Cadastros com Complemento INATIVO ficam fora da seleção. A importação mantém as senhas e as unidades já vinculadas aos usuários.</p></article>
+</section></main></div></div><dialog id="editDialog" aria-labelledby="editTitle" oncancel="editUserId=null"><div class="modal-head"><h2 id="editTitle">Editar usuário</h2><button type="button" class="secondary" onclick="closeEdit()" aria-label="Fechar janela">✕</button></div>
+<p class="modal-sub">Alterações feitas aqui não interferem no formulário de novo usuário.</p>
+<form id="editForm" onsubmit="saveEdit(event)"><div class="user-grid">
+<div class="user-field"><label for="editVistor">Vistoriador *</label><select id="editVistor" required></select></div>
+<div class="user-field"><label for="editUnit">Unidade *</label><select id="editUnit" required></select></div>
+<div class="user-field"><label for="editUsername">Usuário de acesso *</label><input id="editUsername" required maxlength="60" autocomplete="off"></div>
+<div class="user-field"><label for="editAccess">Situação</label><select id="editAccess"><option value="ativo">Ativo</option><option value="bloqueado">Bloqueado</option></select></div>
+</div><div class="password-preserved"><b>Senha atual preservada</b><p>Por segurança, a senha não pode ser exibida nem recuperada do banco. Se não marcar a opção abaixo, a senha existente permanecerá exatamente como está.</p><label><input id="editPasswordEnabled" type="checkbox" onchange="toggleEditPassword()"> Definir nova senha</label></div>
+<div id="editPasswordFields" hidden><div class="user-grid">
+<div class="user-field"><label for="editPassword">Nova senha *</label><div class="password-wrap"><input id="editPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo de 8 caracteres"><button tabindex="-1" type="button" class="eye-button" onclick="togglePassword('editPassword',this)" aria-label="Mostrar nova senha" title="Mostrar nova senha">◉</button></div></div>
+<div class="user-field"><label for="editConfirmPassword">Confirmar nova senha *</label><div class="password-wrap"><input id="editConfirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Repita a nova senha"><button tabindex="-1" type="button" class="eye-button" onclick="togglePassword('editConfirmPassword',this)" aria-label="Mostrar confirmação" title="Mostrar confirmação">◉</button></div></div>
+</div></div><div id="editFeedback" class="feedback" role="status"></div><div class="actions"><button type="button" class="secondary" onclick="closeEdit()">Cancelar</button><button type="submit" class="primary">Salvar alterações</button></div></form></dialog><script>function go(b){let n=b.dataset.page;document.querySelectorAll('.page').forEach(e=>e.classList.toggle('active',e.dataset.name===n));document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e===b));document.getElementById('heading').textContent=n;if(n==='Revisão administrativa')loadReview();if(n==='Administradores'){const panel=document.getElementById('adminUserPanel93'),mount=document.getElementById('adminUsersMount');if(panel&&mount)mount.appendChild(panel);if(typeof adminIdentity!=='undefined'&&adminIdentity)adminUsersRefresh()}window.scrollTo(0,0)}go(document.querySelector('.nav'));
+let users=[];let editUserId=null;let vistoriadores=[];let unidades=[];
+const API=location.protocol==='file:'?'http://127.0.0.1:8765':location.origin;
+let adminToken='';let adminIdentity=null;let adminCatalog=null;
+const nativeFetch=window.fetch.bind(window);
+window.fetch=(url,options={})=>{let path=String(url);if(path.startsWith(API+'/api/admin/')||path.startsWith('/api/admin/')||path.startsWith(API+'/api/usuarios')||path.startsWith('/api/usuarios')){options={...options,headers:{...(options.headers||{}),Authorization:'Bearer '+adminToken}};}return nativeFetch(url,options)};
+function userLabel(id){return document.querySelector('#vistor option[value="'+id+'"]')?.textContent||id}
+function unitLabel(id){return document.querySelector('#unit option[value="'+id+'"]')?.textContent||id}
+function togglePassword(id,button){const input=document.getElementById(id);const show=input.type==='password';input.type=show?'text':'password';button.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha');button.title=show?'Ocultar senha':'Mostrar senha';button.style.color=show?'#c8102e':''}
+function suggestLogin(){const v=document.getElementById('vistor').value;const nome=vistoriadores.find(x=>x.id===v)?.nome||'';if(nome)document.getElementById('username').value=nome.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'.').replace(/^\.|\.$/g,'').slice(0,60)}
+function resetUserForm(){document.getElementById('userForm').reset();for(const id of ['password','confirmPassword'])document.getElementById(id).type='password';showFeedback('',false)}
+function showFeedback(message,error){const el=document.getElementById('userFeedback');el.textContent=message;el.className='feedback '+(error?'error':'ok')}
+function editFeedback(message,error){const el=document.getElementById('editFeedback');el.textContent=message;el.className='feedback '+(error?'error':'ok')}
+async function fetchJSON(path,options){const r=await fetch(API+path,options);let data=await r.json();if(!r.ok||!data.ok)throw Error(data.erro||'Erro de comunicação');return data}
+async function loadCatalogos(){
+ try{
+  const data=await fetchJSON('/api/catalogos');
+  const ordemPorNome=new Intl.Collator('pt-BR',{sensitivity:'base'});
+  vistoriadores=[...data.vistoriadores].sort((a,b)=>ordemPorNome.compare(a.nome,b.nome));
+  unidades=data.unidades;
+  for(const prefix of ['', 'edit']){
+   for(const [name,arr,placeholder] of [['vistor',vistoriadores,'Selecione o vistoriador'],['unit',unidades,'Selecione a unidade']]){
+    const select=document.getElementById(prefix?prefix+name[0].toUpperCase()+name.slice(1):name);select.replaceChildren();select.add(new Option(placeholder,''));
+    arr.filter(x=>prefix||x.ativo_erp!==false).forEach(x=>select.add(new Option(x.nome+(x.erp_id?' — '+x.erp_id:'')+(x.ativo_erp===false?' — INATIVO ERP':''),x.id)));
+   }
+  }
+ }catch(e){showFeedback('Erro ao carregar base ERP: '+e.message,true)}
+}
+async function loadUsers(){try{users=(await fetchJSON('/api/usuarios')).usuarios;renderUsers()}catch(e){showFeedback('Não foi possível conectar ao servidor: '+e.message,true)}}
+function makeRecord(prefix){const v=document.getElementById(prefix?prefix+'Vistor':'vistor'),u=document.getElementById(prefix?prefix+'Unit':'unit');return {login:document.getElementById(prefix?prefix+'Username':'username').value.trim().toLowerCase(),vistoriador_id:v.value,vistoriador_nome:vistoriadores.find(x=>x.id===v.value)?.nome||'',unidade_id:u.value,unidade_nome:unidades.find(x=>x.id===u.value)?.nome||'',ativo:document.getElementById(prefix?prefix+'Access':'access').value==='ativo'}}
+async function saveUserDB(ev){
+ ev.preventDefault();const pass=document.getElementById('password').value,confirm=document.getElementById('confirmPassword').value;
+ if(pass!==confirm){showFeedback('As senhas não coincidem.',true);return}
+ if(pass.length<8){showFeedback('A senha deve ter pelo menos 8 caracteres.',true);return}
+ const record={...makeRecord(''),senha:pass};
+ try{await fetchJSON('/api/usuarios',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(record)});resetUserForm();await loadUsers();showFeedback('Novo usuário cadastrado no SQLite.',false)}catch(e){showFeedback(e.message,true)}
+}
+function renderUsers(){const q=document.getElementById('searchUser').value.toLowerCase();const tbody=document.getElementById('userRows');tbody.replaceChildren();let count=0;users.forEach(u=>{if(!(u.login+' '+u.vistoriador_nome+' '+u.unidade_nome).toLowerCase().includes(q))return;count++;const tr=document.createElement('tr');[u.login,u.vistoriador_nome,u.unidade_nome].forEach(t=>{const td=document.createElement('td');td.textContent=t;tr.appendChild(td)});const status=document.createElement('td');const span=document.createElement('span');span.className='tag '+(u.ativo&&u.ativo_erp!==false?'on':'off');span.textContent=u.ativo_erp===false?'Inativo no ERP':u.ativo?'Ativo':'Bloqueado';status.appendChild(span);tr.appendChild(status);const actions=document.createElement('td');const edit=document.createElement('button');edit.type='button';edit.textContent='Editar';edit.onclick=()=>openEdit(u.id);actions.appendChild(edit);tr.appendChild(actions);tbody.appendChild(tr)});if(!count){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=5;td.textContent='Nenhum usuário encontrado.';tr.appendChild(td);tbody.appendChild(tr)}}
+function openEdit(id){const u=users.find(x=>x.id===id);if(!u)return;editUserId=id;
+ for(const [key,value] of Object.entries({editVistor:u.vistoriador_id,editUnit:u.unidade_id,editUsername:u.login,editAccess:u.ativo?'ativo':'bloqueado'}))document.getElementById(key).value=value;
+ document.getElementById('editPassword').value='';document.getElementById('editConfirmPassword').value='';
+ document.getElementById('editPassword').type='password';document.getElementById('editConfirmPassword').type='password';
+ document.getElementById('editPasswordEnabled').checked=false;toggleEditPassword();editFeedback('',false);
+ document.getElementById('editDialog').showModal();document.getElementById('editUsername').focus();
+}
+function closeEdit(){document.getElementById('editDialog').close();editUserId=null;document.getElementById('editForm').reset()}
+function toggleEditPassword(){const enabled=document.getElementById('editPasswordEnabled').checked;document.getElementById('editPasswordFields').hidden=!enabled;for(const id of ['editPassword','editConfirmPassword']){const el=document.getElementById(id);el.required=enabled;if(!enabled)el.value=''}}
+async function saveEdit(ev){ev.preventDefault();if(editUserId===null)return;const record={...makeRecord('edit'),id:editUserId};
+ if(document.getElementById('editPasswordEnabled').checked){const pass=document.getElementById('editPassword').value,confirm=document.getElementById('editConfirmPassword').value;
+ if(!pass||pass.length<8){editFeedback('A nova senha deve ter pelo menos 8 caracteres.',true);return}
+ if(pass!==confirm){editFeedback('As senhas não coincidem.',true);return}
+ record.senha=pass;
+ }
+ try{await fetchJSON('/api/usuarios',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(record)});closeEdit();await loadUsers();showFeedback('Usuário atualizado. A senha existente foi preservada, salvo se você solicitou sua troca.',false)}catch(e){editFeedback(e.message,true)}
+}
+loadCatalogos();
+
+// Módulo v9: consulta somente leitura, sem alterações no SQLite.
+let revData=[],revFilter='todas';
+function revStatus(os){const status=String(os.status_conferencia||'').toUpperCase();if(['LIBERADA_ADMINISTRACAO','LIBERADA_AUTOMATICAMENTE','SINCRONIZADA_ERP','FALHA_SINCRONIZACAO','APROVADA','APROVADO','LIBERADA','LIBERADO'].includes(status))return 'aprovadas';if(['PENDENTE','REVISAO','REVISÃO','REVISAR','NEEDS_REVIEW','REVISÃO ADMINISTRATIVA'].includes(status))return 'pendentes';let p=[];try{p=JSON.parse(os.payload_json||'{}').pagamentos||[]}catch(e){};if(p.some(x=>x.comprovante_leitura?.validacao?.needsReview||x.needs_review))return 'pendentes';return 'regular'}
+function setRevFilter(v){revFilter=v;document.querySelectorAll('[data-rev-filter]').forEach(b=>b.classList.toggle('selected',b.dataset.revFilter===v));renderReview()}
+async function loadReview(){const feedback=document.getElementById('revFeedback');feedback.classList.remove('v9330-success');feedback.textContent='Consultando OS...';try{const r=await fetchJSON('/api/admin/os');revData=r.registros||[];feedback.textContent='';renderReview()}catch(e){feedback.textContent='Erro ao consultar OS: '+e.message;revData=[];renderReview()}}
+function revMoney(v){return (Number(v||0)/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function revDate(v){if(!v)return '—';let d=new Date(v);return Number.isNaN(d.getTime())?String(v):d.toLocaleString('pt-BR')}
+function revCell(tr,value){let td=document.createElement('td');td.textContent=value==null?'—':String(value);tr.appendChild(td);return td}
+function renderReview(){const q=(document.getElementById('revSearch').value||'').toLocaleLowerCase('pt-BR');const rows=document.getElementById('revRows');rows.replaceChildren();const pending=revData.filter(x=>revStatus(x)==='pendentes').length,ready=revData.filter(x=>revStatus(x)==='pendentes'&&x.etapa_analise_administrativa==='AGUARDANDO_LIBERACAO').length,approved=revData.filter(x=>revStatus(x)==='aprovadas').length;document.getElementById('revCountAll').textContent='('+revData.length+')';document.getElementById('revCountPending').textContent='('+pending+')';document.getElementById('revCountReady').textContent='('+ready+')';document.getElementById('revCountApproved').textContent='('+approved+')';const filtered=revData.filter(x=>(revFilter==='todas'||revStatus(x)===revFilter||(revFilter==='aguardando_liberacao'&&revStatus(x)==='pendentes'&&x.etapa_analise_administrativa==='AGUARDANDO_LIBERACAO'))&&[x.id_interno,x.cliente_nome,x.placa,x.unidade_nome,x.vistoriador].join(' ').toLocaleLowerCase('pt-BR').includes(q)).sort((a,b)=>Number(revStatus(b)==='pendentes')-Number(revStatus(a)==='pendentes')||Number(b.id)-Number(a.id));if(!filtered.length){let tr=document.createElement('tr');let td=revCell(tr,'Nenhuma OS encontrada para o filtro selecionado.');td.colSpan=8;rows.appendChild(tr);return}filtered.forEach(x=>{let tr=document.createElement('tr');const st=revStatus(x);if(st==='pendentes')tr.className='rev-pending';revCell(tr,x.id_interno);revCell(tr,revDate(x.enviada_em||x.aberta_em));revCell(tr,(x.cliente_nome||'—')+' / '+(x.placa||'—'));revCell(tr,(x.unidade_nome||'—')+' / '+(x.vistoriador||'—'));revCell(tr,revMoney(x.total_centavos));let td=document.createElement('td'),badge=document.createElement('span');badge.className='rev-badge '+v9328StatusClass(x);badge.textContent=v9328StatusLabel(x);td.appendChild(badge);tr.appendChild(td);
+ td=document.createElement('td');
+ const etapa=x.etapa_analise_administrativa;
+ const marker=revEl('span','rev-badge '+(etapa==='AGUARDANDO_LIBERACAO'?'v9331-ready':etapa==='CONCLUIDA'?'v9331-done':'v9331-wait'),
+ etapa==='AGUARDANDO_LIBERACAO'?'Aguardando liberação':etapa==='CONCLUIDA'?'Concluída':'Aguardando justificativas');
+ td.appendChild(marker);tr.appendChild(td);
+ td=document.createElement('td');
+ const actions=revEl('div','v9334-actions');
+ if(etapa==='AGUARDANDO_LIBERACAO'&&st==='pendentes'){
+  const liberar=revEl('button','btn v9334-release','Liberar');liberar.type='button';liberar.title='Liberar administrativamente '+x.id_interno;
+  liberar.onclick=()=>v9334QuickRelease(x,liberar);actions.appendChild(liberar);
+ }
+ let btn=document.createElement('button');btn.className='btn';btn.textContent='Detalhes';btn.onclick=()=>showReviewDetail(x.id);actions.appendChild(btn);td.appendChild(actions);tr.appendChild(td);rows.appendChild(tr)})}
+async function v9334QuickRelease(os,button){
+ let snapshot={};try{snapshot=JSON.parse(os.payload_json||'{}').parametros_snapshot||{}}catch(e){}
+ if(snapshot.justifications){openV92Editor(os);return}
+
+ const question='Confirmar LIBERAÇÃO ADMINISTRATIVA da '+os.id_interno+'?\n\nAs divergências justificadas serão aceitas e a ação ficará registrada para auditoria.';
+ if(!confirm(question))return;
+ button.disabled=true;button.textContent='Aguarde...';
+ try{
+  await fetchJSON('/api/admin/os/liberar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({os_id:os.id,justificativa})});
+  await loadReview();v9330CloseDetail(os.id_interno+' liberada pela administração com sucesso.');
+ }catch(e){alert('Não foi possível liberar '+os.id_interno+': '+e.message);await loadReview()}
+ finally{button.disabled=false;button.textContent='Liberar'}
+}
+function v9328StatusLabel(os){
+ const s=String(os.status_conferencia||'').toUpperCase();
+ return ({LIBERADA_ADMINISTRACAO:'Liberada pela administração',LIBERADA_AUTOMATICAMENTE:'Liberada automaticamente',SINCRONIZADA_ERP:'Sincronizada no ERP',FALHA_SINCRONIZACAO:'Falha na sincronização'})[s]||(revStatus(os)==='pendentes'?'Pendente':revStatus(os)==='aprovadas'?'Liberada automaticamente':'Pendente');
+}
+function v9328StatusClass(os){
+ const s=String(os.status_conferencia||'').toUpperCase();
+ return s==='LIBERADA_ADMINISTRACAO'?'v9328-purple':s==='FALHA_SINCRONIZACAO'?'v9328-failure':s==='SINCRONIZADA_ERP'?'v9328-synced':s==='PENDENTE'?'pending':s==='LIBERADA_AUTOMATICAMENTE'?'approved':revStatus(os)==='pendentes'?'pending':revStatus(os)==='aprovadas'?'approved':'pending';
+}
+function revEl(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e}
+function revSection(root,title){const h=revEl('h3','',title);root.appendChild(h);return h}
+function revAttachment(parent,path,label){
+  const safe=String(path||'').replaceAll('\\','/');
+  if(!/^comprovantes\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\.(png|jpg|jpeg|webp|pdf)$/i.test(safe)){
+    parent.appendChild(revEl('span','rev-muted','Arquivo original não disponível'));return;
+  }
+  const a=revEl('button','rev-file',label||'Visualizar arquivo');a.type='button';a.onclick=()=>adminOpenFile(safe);parent.appendChild(a);
+}
+function revPaymentReasons(p){
+  const v=p.comprovante_leitura||{},check=v.validacao||{},reasons=[];
+  if(p.condicao_pagamento==='DINHEIRO')reasons.push('Pagamento em dinheiro exige conferência administrativa');
+  if(v.valor_centavos!=null&&Number(v.valor_centavos)!==Number(p.valor_centavos))reasons.push('Valor divergente: declarado '+revMoney(p.valor_centavos)+' × comprovante '+revMoney(v.valor_centavos));
+  if(check.methodOk===false)reasons.push('Forma de pagamento divergente');
+  if(check.timeOk===false)reasons.push('Data/hora do comprovante fora da janela permitida');
+  if(check.valueOk===false&&!reasons.some(s=>s.startsWith('Valor divergente')))reasons.push('Valor do comprovante não validado');
+  if(check.needsReview&&!reasons.length)reasons.push('Conferência do comprovante sinalizada pelo Vision');
+  return reasons;
+}
+function v9330CloseDetail(message){
+ const detail=document.getElementById('revDetail');
+ if(detail){detail.hidden=true;document.getElementById('revDetailContent')?.replaceChildren()}
+ if(message){const feedback=document.getElementById('revFeedback');if(feedback){feedback.textContent=message;feedback.classList.add('v9330-success');}}
+}
+function v9330IsAdminReleased(x){return String(x.status_conferencia||'').toUpperCase()==='LIBERADA_ADMINISTRACAO'}
+function showReviewDetail(id){
+ const x=revData.find(y=>y.id===id);if(!x)return;
+ const root=document.getElementById('revDetailContent');root.replaceChildren();let payload={};try{payload=JSON.parse(x.payload_json||'{}')}catch(e){}
+ const adminReleased=v9330IsAdminReleased(x);
+ if(adminReleased){const banner=revEl('div','v9330-release-banner');banner.appendChild(revEl('span','','✓ Analisada e liberada pela administração'));root.appendChild(banner)}
+ const pagamentos=payload.pagamentos||[],reasons=pagamentos.flatMap((p,i)=>revPaymentReasons(p).map(t=>'Pagamento '+(i+1)+': '+t));
+ if(revStatus(x)==='pendentes'&&!reasons.length)reasons.push('OS sinalizada para revisão; motivo detalhado não registrado');
+ const notice=revEl('div',reasons.length?(adminReleased?'rev-alert v9330-accepted':'rev-alert'):'rev-ok');notice.appendChild(revEl('strong','',reasons.length?(adminReleased?'Divergências aceitas pela administração':'Motivos da pendência'):'Nenhuma divergência sinalizada'));
+ if(reasons.length){const ul=revEl('ul');reasons.forEach(s=>ul.appendChild(revEl('li','',s)));notice.appendChild(ul)}root.appendChild(notice);
+ const grid=revEl('div','rev-detail-grid');for(const [label,value] of [['OS',x.id_interno],['Situação',v9328StatusLabel(x)],['Cliente',x.cliente_nome],['Placa',x.placa],['Marca / modelo',[x.marca,x.modelo].filter(Boolean).join(' / ')],['Unidade',x.unidade_nome],['Vistoriador',x.vistoriador],['Data de recebimento',revDate(x.enviada_em||x.aberta_em)],['Total declarado',revMoney(x.total_centavos)],['Pagamento',x.pagamento_os||x.condicao_pagamento],['Condutor',x.condutor],['CPF',x.cpf],['Requisição',x.requisicao_cliente]]){const d=revEl('div');d.append(revEl('small','',label),revEl('strong','',value||'—'));grid.appendChild(d)}root.appendChild(grid);
+ revSection(root,'Documentos da OS');const docs=revEl('div','rev-doc-grid');for(const [key,label] of [['CNH','CNH · Nome e CPF'],['CRLV','CRLV · Dados do veículo'],['REQUISICAO','Requisição do cliente']]){const d=revEl('div','rev-pay-card');d.appendChild(revEl('strong','',label));revAttachment(d,(payload.documentos_arquivos||{})[key],'Abrir documento');docs.appendChild(d)}root.appendChild(docs);
+ revSection(root,'Serviços');(payload.itens||[]).forEach((it,i)=>root.appendChild(revEl('div','rev-item',(i+1)+'. '+(it.servico||it.nome||'Serviço')+' — '+revMoney(it.preco_cobrado_centavos))));
+ root.appendChild(revEl('div','v92-summary','TOTAL DOS SERVIÇOS: '+revMoney((payload.itens||[]).reduce((s,it)=>s+Number(it.preco_cobrado_centavos||0),0))));revSection(root,'Pagamentos e conferência');if(!pagamentos.length)root.appendChild(revEl('p','',x.pagamento_os==='FATURADO'?'OS faturada: não há comprovantes de pagamento à vista.':'Nenhum pagamento informado.'));
+ pagamentos.forEach((p,i)=>{const v=p.comprovante_leitura||{},card=revEl('div','rev-pay-card'),r=revPaymentReasons(p);const top=revEl('div','rev-pay-top');top.append(revEl('strong','',`Pagamento ${i+1} · ${p.condicao_pagamento||'—'}`),revEl('span',r.length?(adminReleased?'rev-badge v9328-purple':'rev-badge pending'):'rev-badge regular',r.length?(adminReleased?'Divergência aceita pela administração':'Exige revisão'):'Sem divergência sinalizada'));card.appendChild(top);
+ if(p.condicao_pagamento==='DINHEIRO'){
+  card.appendChild(revEl('strong','','Valor em dinheiro: '+revMoney(p.valor_centavos)));
+  card.appendChild(revEl('p','',p.declaracao_recebimento_dinheiro||'Declaração de recebimento ainda não registrada.'));
+  const receipt=p.recebimento_dinheiro_auditoria;if(receipt)card.appendChild(revEl('small','','Confirmado por '+receipt.operador+' · '+revDate(receipt.registrado_em)));
+  root.appendChild(card);return;
+ }
+ const cols=revEl('div','rev-pay-grid');for(const [label,value] of [['Valor declarado',revMoney(p.valor_centavos)],['Valor no comprovante',v.valor_centavos==null?'Não identificado':revMoney(v.valor_centavos)],['Data/hora do comprovante',revDate(v.data_hora)],['Identificador',v.id_transacao||'—']]){const d=revEl('div');d.append(revEl('small','',label),revEl('strong','',value));cols.appendChild(d)}if(v.valor_centavos!=null){const diff=Math.abs(Number(p.valor_centavos||0)-Number(v.valor_centavos));const d=revEl('div');d.append(revEl('small','','Diferença de valores'),revEl('strong',diff?'v9318-diff':'',revMoney(diff)+(diff?' · divergente':' · sem diferença')));cols.appendChild(d)}card.appendChild(cols);
+ if(r.length){const ul=revEl('ul',adminReleased?'rev-reasons v9330-accepted-reasons':'rev-reasons');r.forEach(t=>ul.appendChild(revEl('li','',t)));card.appendChild(ul)}
+ const attach=revEl('div','rev-attachment');attach.appendChild(revEl('strong','','Comprovante original'));revAttachment(attach,p.comprovante_arquivo,'Abrir comprovante');card.appendChild(attach);root.appendChild(card)});
+ const controls=revEl('div','v92-actions');const edit=revEl('button','primary','Editar OS');edit.type='button';edit.onclick=()=>openV92Editor(x);controls.appendChild(edit);const hist=revEl('button','secondary','Histórico de alterações');hist.type='button';hist.onclick=()=>showV92History(x.id);controls.appendChild(hist);root.appendChild(controls);root.appendChild(revEl('div','', ''));const histArea=revEl('div','');histArea.id='v92History';root.appendChild(histArea);
+ document.getElementById('revDetail').hidden=false;document.getElementById('revDetail').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Administração v9.3 — edição auditada, catálogo e Vision.
+let v92Current=null;
+const v92Fields=[['cliente_nome','Cliente'],['placa','Placa'],['marca','Marca'],['modelo','Modelo'],['local_vistoria','Local da vistoria'],['condutor','Condutor'],['cpf','CPF'],['email','E-mail'],['celular','Celular'],['requisicao_cliente','Requisição'],['pagamento_os','Condição da OS']];
+function v92Node(tag,attrs={},text){const el=document.createElement(tag);Object.entries(attrs).forEach(([k,v])=>{if(k==='class')el.className=v;else if(k==='type')el.type=v;else el.setAttribute(k,v)});if(text!==undefined)el.textContent=text;return el}
+function v92Input(value='',type='text'){let i=v92Node('input',{type});i.value=value??'';return i}
+function v92Labeled(parent,title,value){let label=v92Node('label',{},title),inp=v92Input(value);label.appendChild(inp);parent.appendChild(label);return inp}
+function v92File(parent,label,old){
+ const wrap=v92Node('div',{class:'v934-doc-card'});wrap.appendChild(v92Node('strong',{},label));
+ const controls=v92Node('div',{class:'v934-doc-actions'});
+ const view=v92Node('button',{type:'button',class:'primary'},'Visualizar original');view.disabled=!old;view.onclick=()=>adminOpenFile(old);
+ const file=v92Node('input',{type:'file',accept:'image/jpeg,image/png,image/webp,application/pdf',class:'v934-hidden-file'});
+ const upload=v92Node('button',{type:'button',class:'secondary'},'Incluir novo arquivo');upload.onclick=()=>file.click();
+ controls.append(view,upload);wrap.append(controls,file);
+ const filenameRow=v92Node('div',{class:'v935-file-row'});
+ const filename=v92Node('span',{class:'v92-muted'},'Nenhum novo arquivo selecionado');
+ const clearNew=v92Node('button',{type:'button',class:'v935-file-clear',title:'Remover novo arquivo selecionado','aria-label':'Remover novo arquivo selecionado'},'×');
+ clearNew.hidden=true;filenameRow.append(filename,clearNew);wrap.appendChild(filenameRow);
+ const del=v92Node('label',{class:'v934-check'}),ck=v92Node('input',{type:'checkbox'});
+ del.append(ck,document.createTextNode(' Remover Anexo Original ao Salvar'));wrap.appendChild(del);
+ const preview=v92Node('div',{class:'v933-preview'});wrap.appendChild(preview);let previewUrl=null;
+ clearNew.onclick=()=>{file.value='';preview.replaceChildren();filename.textContent='Nenhum novo arquivo selecionado';clearNew.hidden=true;if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}};
+ file.onchange=()=>{preview.replaceChildren();if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null}const f=file.files[0];filename.textContent=f?'Novo arquivo: '+f.name:'Nenhum novo arquivo selecionado';clearNew.hidden=!f;if(!f)return;previewUrl=URL.createObjectURL(f);const viewer=v92Node(f.type==='application/pdf'?'iframe':'img');viewer.src=previewUrl;viewer.style.cssText='display:block;width:100%;max-width:650px;height:'+(f.type==='application/pdf'?'380px':'auto')+';max-height:420px;object-fit:contain;margin-top:12px;border:1px solid #ddd;border-radius:8px';preview.appendChild(viewer)};
+ parent.appendChild(wrap);return {file,ck,old};
+}
+function v92FileData(file){return new Promise((resolve,reject)=>{if(!file)return resolve(null);if(file.size>12*1024*1024)return reject(Error('Arquivo maior que 12 MB'));const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(Error('Falha na leitura do arquivo'));r.readAsDataURL(file)})}
+function v92Money(c){return revMoney(c)}
+function v92PriceDetail(s,client){
+ if(!s||!client)throw Error('Serviço ou cliente não selecionado.');
+ const detail=erpPriceDetail(adminCatalog.prices[String(s.code)]??adminCatalog.prices[String(s.id_interno)],client);
+ return {...detail,source:detail.label,index:detail.table_requested};
+}
+function v92Price(s,client){return v92PriceDetail(s,client).cents;}
+
+function v92Client(x){return adminCatalog.clients.find(c=>String(c.id_interno)===String(x.cliente_id))}
+function v92SelectedService(it){return adminCatalog.services.find(s=>(String(s.id_interno)===String(it.servico_erp_id)||String(s.erp_id)===String(it.servico_erp_id)))||adminCatalog.services.find(s=>s.name===it.servico)}
+async function adminOpenFile(path){try{const url=API+'/'+String(path).split('/').map(encodeURIComponent).join('/');const r=await fetch(url,{headers:{Authorization:'Bearer '+adminToken}});if(!r.ok)throw Error('Arquivo indisponível');const blob=await r.blob();const objectUrl=URL.createObjectURL(blob);window.open(objectUrl,'_blank');setTimeout(()=>URL.revokeObjectURL(objectUrl),120000)}catch(e){alert(e.message)}}
+async function adminEnter(){const feedback=document.getElementById('admLoginError');feedback.textContent='';try{const r=await fetchJSON('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({login:document.getElementById('admLogin').value,senha:document.getElementById('admSenha').value})});adminToken=r.token;adminIdentity=r.usuario;document.getElementById('admSenha').value='';adminCatalog=await fetchJSON('/api/admin/catalogo');document.getElementById('adminGate').style.display='none';await loadReview();await loadUsers();await adminUsersRefresh()}catch(e){feedback.textContent=e.message}}
+let adminEditId=null,adminUserCache=[];
+function adminResetForm(){
+ adminEditId=null;
+ for(const id of ['adminNewName','adminNewLogin','adminNewPassword','adminNewConfirm'])document.getElementById(id).value='';
+ document.getElementById('adminNewActive').value='ativo';
+ document.getElementById('adminSaveButton').textContent='Salvar administrador';
+ document.getElementById('adminPasswordHint').textContent='Senha obrigatória no cadastro. Mínimo de 6 caracteres.';
+}
+function adminEditUser(id){
+ const u=adminUserCache.find(x=>String(x.id)===String(id));if(!u)return;
+ adminEditId=u.id;
+ const d=document.getElementById('adminEditDialog');
+ document.getElementById('adminEditName').value=u.nome||'';
+ document.getElementById('adminEditLogin').value=u.login||'';
+ document.getElementById('adminEditActive').value=u.ativo?'ativo':'bloqueado';
+ document.getElementById('adminEditPasswordEnabled').checked=false;
+ document.getElementById('adminEditPassword').value='';
+ document.getElementById('adminEditConfirm').value='';
+ document.getElementById('adminEditPassword').type='password';
+ document.getElementById('adminEditConfirm').type='password';
+ document.getElementById('adminEditFeedback').textContent='';
+ adminToggleEditPassword();
+ d.showModal();
+ document.getElementById('adminEditName').focus();
+}
+function adminCloseEdit(){
+ document.getElementById('adminEditDialog').close();
+ adminEditId=null;
+ document.getElementById('adminEditForm').reset();
+}
+function adminToggleEditPassword(){
+ const on=document.getElementById('adminEditPasswordEnabled').checked;
+ document.getElementById('adminEditPasswordFields').hidden=!on;
+ for(const id of ['adminEditPassword','adminEditConfirm']){
+  const el=document.getElementById(id);el.required=on;
+  if(!on)el.value='';
+ }
+}
+async function adminSaveEdit(ev){
+ ev.preventDefault();
+ if(adminEditId===null)return;
+ const nome=document.getElementById('adminEditName').value.trim();
+ const login=document.getElementById('adminEditLogin').value.trim();
+ const ativo=document.getElementById('adminEditActive').value==='ativo';
+ const feedback=document.getElementById('adminEditFeedback');
+ const record={id:adminEditId,nome,login,ativo};
+ if(!nome||!login){feedback.textContent='Preencha nome e usuário.';return}
+ if(document.getElementById('adminEditPasswordEnabled').checked){
+  const senha=document.getElementById('adminEditPassword').value;
+  const confirm=document.getElementById('adminEditConfirm').value;
+  if(senha.length<6){feedback.textContent='A nova senha deve ter pelo menos 6 caracteres.';return}
+  if(senha!==confirm){feedback.textContent='As senhas não coincidem.';return}
+  record.senha=senha;
+ }
+ try{
+  await fetchJSON('/api/admin/usuarios',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(record)});
+  adminCloseEdit();await adminUsersRefresh();
+ }catch(e){feedback.textContent=e.message}
+}
+function adminRenderUsers(){
+ const root=document.getElementById('adminUsers93');if(!root)return;
+ const term=(document.getElementById('adminSearch')?.value||'').toLocaleLowerCase('pt-BR').trim();
+ root.replaceChildren();
+ const table=v92Node('table',{class:'v935-admin-table'});
+ const head=v92Node('thead'),hr=v92Node('tr');
+ for(const name of ['Nome completo','Usuário','Situação','Ações'])hr.appendChild(v92Node('th',{},name));
+ head.appendChild(hr);table.appendChild(head);
+ const body=v92Node('tbody');
+ for(const u of adminUserCache.filter(u=>[u.nome,u.login].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(term)))){
+  const tr=v92Node('tr');
+  tr.appendChild(v92Node('td',{},u.nome||''));
+  tr.appendChild(v92Node('td',{},u.login||''));
+  const status=v92Node('td'),tag=v92Node('span',{class:u.ativo?'v935-status-active':'v935-status-blocked'},u.ativo?'Ativo':'Bloqueado');status.appendChild(tag);tr.appendChild(status);
+  const actions=v92Node('td'),edit=v92Node('button',{type:'button',class:'v935-edit'},'Editar');
+  edit.onclick=()=>adminEditUser(u.id);actions.appendChild(edit);tr.appendChild(actions);body.appendChild(tr);
+ }
+ table.appendChild(body);root.appendChild(table);
+ if(!body.children.length)root.appendChild(v92Node('p',{class:'v92-muted'},'Nenhum administrador encontrado.'));
+}
+async function adminUsersRefresh(){
+ const r=await fetchJSON('/api/admin/usuarios');adminUserCache=r.usuarios||[];adminRenderUsers();
+}
+async function adminCreateUser(){
+ const nome=document.getElementById('adminNewName').value.trim(),login=document.getElementById('adminNewLogin').value.trim();
+ const senha=document.getElementById('adminNewPassword').value,confirm=document.getElementById('adminNewConfirm').value;
+ const ativo=document.getElementById('adminNewActive').value==='ativo';
+ if(!nome||!login) return alert('Preencha nome completo e usuário de acesso.');
+ if(senha.length<6)return alert('Senha deve conter no mínimo 6 caracteres.');
+ if(senha&&senha.length<6)return alert('Nova senha deve conter no mínimo 6 caracteres.');
+ if(senha!==confirm)return alert('Senha e confirmação não conferem.');
+ try{
+  await fetchJSON('/api/admin/usuarios',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,login,senha,ativo})});
+  adminResetForm();await adminUsersRefresh();
+ }catch(e){alert(e.message)}
+}
+function v9318EnsureOsDialog(){
+ let dialog=document.getElementById('v9318OsDialog');if(dialog)return dialog;
+ dialog=document.createElement('dialog');dialog.id='v9318OsDialog';dialog.setAttribute('aria-labelledby','v9318OsTitle');
+ const shell=document.createElement('div');shell.className='v9318-modal-shell';
+ const head=document.createElement('div');head.className='v9318-modal-head';
+ const title=document.createElement('h2');title.id='v9318OsTitle';title.textContent='Edição administrativa da OS';
+ const close=document.createElement('button');close.type='button';close.className='secondary';close.textContent='✕ Fechar';close.onclick=v9318CloseOsDialog;
+ head.append(title,close);
+ const body=document.createElement('div');body.className='v9318-modal-body';
+ const editor=document.createElement('div');editor.id='v92Editor';body.appendChild(editor);shell.append(head,body);dialog.appendChild(shell);document.body.appendChild(dialog);
+ dialog.addEventListener('close',()=>{editor.replaceChildren();editor.className='';v92Current=null});
+ return dialog;
+}
+function v9318CloseOsDialog(){const d=document.getElementById('v9318OsDialog');if(d?.open)d.close()}
+function openV92Editor(x){
+ if(!adminIdentity||!adminCatalog){alert('Faça login administrativo.');return}
+ let p={};try{p=JSON.parse(x.payload_json||'{}')}catch(e){}
+ const config=p.parametros_snapshot||{};
+ const reasonSettings=config.justifications||{proof:true,financial:true,other:true};
+ const modernReasons=!!config.justifications;
+ const reviewTolerance=config.tolerance_cents||0;
+ function reviewProofIssues(v,key,amount){
+  if(key==='DINHEIRO')return [];
+  const normalize=t=>String(t||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,'');
+  const expected={PIX:['PIX'],DEBITO:['CARTAODEBITO','DEBITO'],CREDITO_1X:['CARTAOCREDITO','CARTAOCREDITO1X','CREDITO1X'],CREDITO_2X:['CARTAOCREDITO','CARTAOCREDITO2X','CREDITO2X']}[key]||[];
+  const issues=[];const actions=config.actions||{};
+  if(actions.value==='REVIEW'&&(v?.valor_centavos==null||Math.abs(Number(v.valor_centavos)-amount)>reviewTolerance))issues.push('Valor divergente ou não identificado');
+  if(actions.method==='REVIEW'&&!expected.includes(normalize(v?.condicao)))issues.push('Forma de pagamento divergente');
+  const withZone=t=>{let text=String(t||'');if(text&&!/(Z|[+-]\d{2}:?\d{2})$/i.test(text))text+='-03:00';return new Date(text)};
+  const paid=withZone(v?.data_hora),opened=withZone(p.aberta_em);
+  if(actions.time==='REVIEW'&&(!Number.isFinite(paid.getTime())||!Number.isFinite(opened.getTime())||Math.abs(paid-opened)>Number(config.validity_minutes??30)*60000))issues.push('Comprovante fora da validade ou sem horário identificado');
+  return issues;
+ }
+ let client=v92Client(x);if(!client){alert('Cliente sem vínculo com catálogo de preços.');return}
+ v92Current={x,p};const dialog=v9318EnsureOsDialog();const root=document.getElementById('v92Editor');root.replaceChildren();root.className='v92-edit';root.appendChild(v92Node('h3',{},'Editar OS · '+x.id_interno));root.appendChild(v92Node('p',{class:'v92-muted'},'Imutáveis: número, unidade, vistoriador e datas. Responsável: '+adminIdentity.login));
+ root.appendChild(v92Node('h3',{},'Dados Editáveis'));let grid=v92Node('div',{class:'v92-grid'});root.appendChild(grid);let fields={};v92Fields.forEach(([k,label])=>{
+   if(k==='local_vistoria'||k==='pagamento_os'){
+     let wrap=v92Node('label',{},label),sel=v92Node('select');
+     const opts=k==='local_vistoria'?[['Base','Base'],['Móvel','Móvel']]:[['A_VISTA','À vista'],['FATURADO','Faturado']];
+     opts.forEach(([v,t])=>sel.appendChild(v92Node('option',{value:v},t)));
+     sel.value=x[k]??p[k]??opts[0][0];wrap.appendChild(sel);grid.appendChild(wrap);fields[k]=sel;
+   }else fields[k]=v92Labeled(grid,label,x[k]??p[k]??'');
+ });
+ const clabel=fields.cliente_nome.parentElement;const customerSelect=v92Node('select');adminCatalog.clients.filter(c=>c.status==='Aprovado').forEach(c=>customerSelect.appendChild(v92Node('option',{value:c.id_interno},c.name)));customerSelect.value=x.cliente_id;clabel.replaceChild(customerSelect,fields.cliente_nome);fields.cliente_nome=customerSelect;customerSelect.onchange=()=>{client=adminCatalog.clients.find(c=>String(c.id_interno)===String(customerSelect.value));showPriceTable();items.forEach(i=>{i.refreshPrice()});if(calcReady)calc();refreshPaymentEligibility()};
+ root.appendChild(v92Node('h3',{},'Documentos'));let docs={};
+ for(const [kind,label] of [['CNH','CNH'],['CRLV','CRLV'],['REQUISICAO','Requisição']]){
+   const old=(p.documentos_arquivos||{})[kind];
+   docs[kind]=v92File(root,label,old);
+
+ }
+ root.appendChild(v92Node('h3',{},'Serviços'));
+ const priceTableInfo=v92Node('p',{class:'v92-muted','aria-live':'polite'});
+ function showPriceTable(){
+   const i=Number(client?.price_index);
+   const osIndex=Number(x.tabela_preco_indice||p.tabela_preco_indice);
+   priceTableInfo.textContent='Cliente: '+(client?.name||'não identificado')+' · Tabela vinculada: '+(Number.isInteger(i)&&i>=0?(i===0?'Padrão':'Tabela '+i):'NÃO DEFINIDA')+(Number.isInteger(osIndex)&&osIndex>0&&osIndex!==i?' · ATENÇÃO: OS registrada com índice '+osIndex:'')+' · Preço zero na tabela: aplica Padrão.';
+ }
+ showPriceTable();root.appendChild(priceTableInfo);
+ let itemBox=v92Node('div');root.appendChild(itemBox);let items=[];let calcReady=false;let itemTotal=v92Node('div',{class:'v92-summary'});root.appendChild(itemTotal);
+ function addItem(it={}){
+  const row=v92Node('div',{class:'v92-line'});
+  const sel=v92Node('select');
+  sel.appendChild(v92Node('option',{value:''},'Selecione um serviço'));
+  adminCatalog.services.forEach((service,index)=>{
+    // Índice local por opção: não depende de IDs duplicados ou tipos diferentes.
+    const option=v92Node('option',{value:String(index)},service.name);
+    sel.appendChild(option);
+  });
+  const original=v92SelectedService(it);
+  const originalIndex=adminCatalog.services.findIndex(service=>service===original);
+  sel.value=originalIndex>=0?String(originalIndex):'';
+  const price=v92Input(((Number(it.preco_cobrado_centavos)||0)/100).toFixed(2),'number');
+  price.step='0.01';
+  const del=v92Node('button',{type:'button'},'Excluir');
+  del.onclick=()=>{row.remove();items=items.filter(a=>a.row!==row);calc()};
+  // Sempre resolver o produto pela opção efetivamente selecionada.
+  // A leitura do índice ocorre em cada evento, inclusive após voltar ao produto anterior.
+  function selectedService(){
+    if(sel.value==='')return null;
+    const index=Number(sel.value);
+    return Number.isInteger(index)?adminCatalog.services[index]||null:null;
+  }
+  // O preço é derivado da seleção ATUAL, nunca do item original da OS.
+  // Aplicar a atualização diretamente ao campo e emitir eventos para
+  // sincronizar qualquer observador externo da interface.
+  function refreshPrice(){
+    const service=selectedService();
+    try{
+      const newCents=service?v92PriceDetail(service,client).cents:0;
+      if(!Number.isFinite(newCents))throw Error('Preço calculado inválido');
+      price.value=(newCents/100).toFixed(2);
+      price.setAttribute('value',price.value);
+      if(calcReady)calc();
+    }catch(e){
+      price.value='';
+      if(calcReady)calc();
+      alert('Não foi possível obter o preço do serviço: '+e.message);
+    }
+  }
+  let lastSelection=sel.value;
+  function applySelection(){
+    if(sel.value===lastSelection)return;
+    lastSelection=sel.value;
+    refreshPrice();
+  }
+  sel.addEventListener('change',applySelection);
+  // input é disparado por alguns navegadores antes de change.
+  sel.addEventListener('input',applySelection);
+  price.addEventListener('input',calc);
+  row.append(sel,price,del);
+  itemBox.appendChild(row);
+  items.push({row,sel,price,old:it,selectedService,refreshPrice});
+  if(calcReady)calc();
+ }
+ (p.itens||[]).forEach(addItem);let plus=v92Node('button',{type:'button'},'+ Incluir serviço');plus.onclick=()=>addItem();root.appendChild(plus);
+ root.appendChild(v92Node('h3',{},'Pagamentos e Comprovantes'));let payBox=v92Node('div');root.appendChild(payBox);let pays=[];
+ function paymentReviewReasons(pay){
+  if(pay.method.value==='DINHEIRO')return [];
+  if(modernReasons){const reading=pay.getReading();if(!reading&&!pay.old.comprovante_arquivo&&!pay.attachment.file.files.length&&config.payments?.[pay.method.value]?.proof===false)return [];return reviewProofIssues(reading,pay.method.value,cents(pay.amount.value))}
+  const replaced=!!pay.attachment.file.files[0];
+  const v=replaced?pay.getReading():(pay.old.comprovante_leitura||{});
+  const reasons=[];
+  if(!v){reasons.push('Leitura Vision do novo comprovante pendente');return reasons}
+  const val=v.valor_centavos;
+  if(val==null)reasons.push('Valor do comprovante não identificado');
+  else if(Number(val)!==cents(pay.amount.value))reasons.push('Valor do comprovante diferente do pagamento declarado');
+  if(!v.data_hora)reasons.push('Data/hora da transação não identificada');
+  // A nova leitura não traz validacao.timeOk: não considerar como aprovada.
+  const check=v.validacao||{};
+  if(check.timeOk===false)reasons.push('Timestamp fora da janela permitida');
+  else if(check.timeOk!==true)reasons.push('Timestamp sem validação antifraude');
+  if(check.methodOk===false)reasons.push('Forma de pagamento divergente');
+  if(check.valueOk===false&&val==null)reasons.push('Validação automática do valor indisponível');
+  return reasons;
+ }
+ function addPay(pmt={}){
+  const card=v92Node('div',{class:'v92-doc'});
+  const row=v92Node('div',{class:'v92-line'});
+  const method=v92Node('select');
+  adminCatalog.paymentConditions.forEach(c=>method.appendChild(v92Node('option',{value:c.key},c.label)));
+  method.value=pmt.condicao_pagamento||'PIX';
+  const amount=v92Input(((Number(pmt.valor_centavos)||0)/100).toFixed(2).replace('.',','),'text');
+  amount.inputMode='decimal';
+  const del=v92Node('button',{type:'button'},'Excluir pagamento');
+  del.onclick=()=>{card.remove();pays=pays.filter(a=>a.card!==card);calc()};
+  row.append(method,amount,del);card.appendChild(row);
+  const attachment=v92File(card,'Comprovante',pmt.comprovante_arquivo);
+  const review=v92Node('div',{class:'v9317-review','aria-live':'polite'});
+  card.appendChild(review);
+  const justification=v92Node('textarea',{rows:'2',placeholder:reasonSettings.proof?'Justificativa por comprovante, quando houver divergência (mínimo 10 caracteres)':'Justificativa por comprovante (opcional)'});
+  justification.value=pmt.justificativa_divergencia||'';
+  card.appendChild(justification);
+  const cashLabel=v92Node('label',{},'Declaração de recebimento em dinheiro *');
+  const cashDeclaration=v92Node('textarea',{rows:'2','aria-label':'Declaração de recebimento em dinheiro',placeholder:'Ex.: Recebi R$ 120,00 em dinheiro referente a esta OS.'});
+  cashDeclaration.value=pmt.declaracao_recebimento_dinheiro||'';
+  cashLabel.appendChild(cashDeclaration);card.appendChild(cashLabel);
+  const cashHint=v92Node('p',{class:'v92-muted'});card.appendChild(cashHint);
+  function cashDisplay(){const cash=method.value==='DINHEIRO';cashLabel.hidden=!cash;cashHint.hidden=!cash;justification.hidden=cash;attachment.file.closest('.v934-doc-card').hidden=cash;review.hidden=cash;cashDeclaration.required=cash;cashHint.textContent='Obrigatório para liberar: escreva que recebeu '+v92Money(cents(amount.value))+' em dinheiro. A declaração e o administrador serão registrados no histórico.';}
+  method.addEventListener('change',cashDisplay);amount.addEventListener('input',cashDisplay);cashDisplay();
+  let reading=null,readingError='',readingPending=false,requestSerial=0;
+  function activeReading(){
+    if(attachment.file.files[0])return reading;
+    if(attachment.ck.checked)return null;
+    return pmt.comprovante_leitura||null;
+  }
+  function showReview(){
+    review.replaceChildren();
+    const isNew=!!attachment.file.files[0];
+    const hasOriginal=!!pmt.comprovante_arquivo;
+    const v=activeReading();
+    const check=v?.validacao||{};
+    const reasons=[];
+    if(method.value!=='DINHEIRO'){
+      if(readingPending)reasons.push('Aguardando análise Vision do novo comprovante');
+      else if(readingError)reasons.push('Falha na leitura Vision: '+readingError);
+      else if(!v)reasons.push(isNew?'Leitura do novo comprovante ainda não disponível':(attachment.ck.checked?'Comprovante original marcado para remoção':'Comprovante sem leitura Vision disponível'));
+      else{
+        if(v.valor_centavos==null)reasons.push('Valor do comprovante não identificado');
+        else if(Number(v.valor_centavos)!==v9319Cents(amount.value))reasons.push('Valor divergente: declarado '+v92Money(v9319Cents(amount.value))+' × comprovante '+v92Money(v.valor_centavos));
+        if(!v.data_hora)reasons.push('Data/hora da transação não identificada');
+        if(check.timeOk===false)reasons.push('Data/hora do comprovante fora da janela permitida');
+        else if(check.timeOk!==true)reasons.push('Data/hora da transação ainda não validada');
+        if(check.methodOk===false)reasons.push('Forma de pagamento divergente');
+        if(check.valueOk===false&&v.valor_centavos==null)reasons.push('Validação automática do valor indisponível');
+        if(check.needsReview&&!reasons.length)reasons.push('Comprovante sinalizado para revisão');
+      }
+    }
+    if(modernReasons){reasons.splice(0,reasons.length,...reviewProofIssues(v,method.value,v9319Cents(amount.value)));}
+    const top=v92Node('div',{class:'rev-pay-top'});
+    top.append(v92Node('strong',{},isNew?'Conferência do novo comprovante':hasOriginal&&!attachment.ck.checked?'Conferência do comprovante original':'Conferência do pagamento'));
+    top.append(v92Node('span',{class:'rev-badge '+(reasons.length?'pending':'regular')},reasons.length?'Exige revisão':method.value==='DINHEIRO'?'Sem comprovante bancário':'Sem divergência sinalizada'));
+    review.appendChild(top);
+    const grid=v92Node('div',{class:'rev-pay-grid'});
+    const declared=v9319Cents(amount.value);
+    const difference=v?.valor_centavos==null?null:declared-Number(v.valor_centavos);
+    const values=[
+      ['Valor declarado',v92Money(declared)],
+      ['Valor identificado no comprovante',v?.valor_centavos==null?'Não identificado':v92Money(v.valor_centavos)],
+      ['Data/hora da transação',v?.data_hora?revDate(v.data_hora):'Não identificada'],
+      ['Diferença de valores',difference==null?'Não calculável':v92Money(Math.abs(difference))+(difference===0?' · sem diferença':' · divergente')]
+    ];
+    for(const [label,value] of values){const cell=v92Node('div');cell.append(v92Node('small',{},label),v92Node('strong',{class:label==='Diferença de valores'&&difference!==null&&difference!==0?'v9318-diff':''},value));grid.appendChild(cell)}
+    review.appendChild(grid);
+    if(v?.id_transacao)review.appendChild(v92Node('p',{class:'v92-muted'},'Identificador da transação: '+v.id_transacao));
+    if(method.value!=='DINHEIRO'&&difference===0)review.appendChild(v92Node('p',{class:'v9319-proof-ok'},'✓ O valor do comprovante coincide com o pagamento declarado. Esta conferência é independente do fechamento financeiro da OS.'));
+    if(reasons.length){const ul=v92Node('ul',{class:'rev-reasons'});reasons.forEach(r=>ul.appendChild(v92Node('li',{},r)));review.appendChild(ul)}
+    if(isNew)review.appendChild(v92Node('p',{class:'v92-muted'},'A conferência usa o novo arquivo. O original permanece disponível para auditoria.'));
+    else if(hasOriginal&&!attachment.ck.checked)review.appendChild(v92Node('p',{class:'v92-muted'},'Dados da leitura do comprovante original registrada na OS.'));
+    if(reasons.length)review.appendChild(v92Node('p',{class:'v9317-review-note'},reasonSettings.proof?'Justificativa por comprovante obrigatória: mínimo de 10 caracteres.':'Justificativa por comprovante opcional conforme parametrização.'));
+  }
+  async function readNewProof(){
+    const serial=++requestSerial;
+    reading=null;readingError='';readingPending=false;
+    const f=attachment.file.files[0];
+    if(!f){showReview();return}
+    readingPending=true;showReview();
+    try{
+      const data=await v92FileData(f);
+      const r=await fetchJSON('/api/admin/ler-comprovante',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:data})});
+      if(serial!==requestSerial)return;
+      const v=r.resultado||{};
+      const val=v.valor==null?null:Math.round(Number(v.valor)*100);
+      reading={condicao:v.condicao,valor_centavos:val,data_hora:v.data_hora,id_transacao:v.identificador_transacao,tipo_identificador:v.tipo_identificador,_admin_vision:true};
+    }catch(e){if(serial!==requestSerial)return;readingError=e.message}
+    finally{if(serial===requestSerial){readingPending=false;showReview();if(calcReady)calc()}}
+  }
+  attachment.file.addEventListener('change',readNewProof);
+  // The file control also has a clear button. Keep the active reading in sync.
+  const clearNew=attachment.file.parentElement.querySelector('.v935-file-clear');
+  if(clearNew)clearNew.addEventListener('click',()=>{requestSerial++;reading=null;readingError='';readingPending=false;showReview();if(calcReady)calc()});
+  attachment.ck.addEventListener('change',()=>{showReview();if(calcReady)calc()});
+  amount.addEventListener('input',()=>{showReview();calc()});
+  amount.addEventListener('blur',()=>{amount.value=(v9319Cents(amount.value)/100).toFixed(2).replace('.',',');showReview();calc()});
+  method.addEventListener('change',showReview);
+  payBox.appendChild(card);
+  pays.push({card,method,amount,attachment,old:pmt,justification,cashDeclaration,getReading:()=>activeReading()});
+  showReview();if(calcReady)calc();
+ }
+ (p.pagamentos||[]).forEach(addPay);let add=v92Node('button',{type:'button'},'+ Incluir pagamento');add.onclick=()=>addPay();root.appendChild(add);
+ let summary=v92Node('div',{class:'v92-summary'});root.appendChild(summary);
+ let finance=v92Node('section',{class:'v9319-finance'});root.appendChild(finance);let financeContent=v92Node('div',{'aria-live':'polite'});finance.appendChild(financeContent);
+ function v9319Cents(value){let v=String(value??'').trim().replace(/\s/g,'').replace(/R\$/g,'');if(v.includes(','))v=v.replace(/\./g,'').replace(',','.');return Math.round((Number(v)||0)*100)}
+ function cents(v){return v9319Cents(v)}
+ function paymentEvidence(i){
+   const declared=cents(i.amount.value);
+   if(i.method.value==='DINHEIRO')return {value:declared,source:'Dinheiro declarado (sem comprovante bancário)',known:true};
+   const v=i.getReading();
+   if(i.attachment.file.files[0]&&!v)return {value:null,source:'Novo comprovante aguardando leitura Vision',known:false};
+   if(i.attachment.ck.checked)return {value:null,source:'Comprovante removido',known:false};
+   if(!v||v.valor_centavos==null||!Number.isFinite(Number(v.valor_centavos)))return {value:null,source:'Valor do comprovante não identificado',known:false};
+   return {value:Number(v.valor_centavos),source:'Comprovante ativo',known:true};
+ }
+ function calc(){
+   const total=items.reduce((a,i)=>a+cents(i.price.value),0);
+   const declared=pays.reduce((a,i)=>a+cents(i.amount.value),0);
+   const evidences=pays.map(paymentEvidence);
+   const unknown=evidences.filter(e=>!e.known).length;
+   const verified=evidences.reduce((a,e)=>a+(e.known?e.value:0),0);
+   const diff=verified-total;
+   itemTotal.textContent='TOTAL DOS SERVIÇOS: '+v92Money(total);
+   summary.textContent='Total dos serviços: '+v92Money(total)+' · Declarado: '+v92Money(declared)+' · Identificado: '+v92Money(verified)+(unknown?' · '+unknown+' comprovante(s) sem valor identificado':'');
+   financeContent.replaceChildren();financeContent.appendChild(v92Node('h4',{},'Conciliação financeira da OS'));
+   const grid=v92Node('div',{class:'v9319-finance-grid'});
+   for(const [label,value] of [['Total dos serviços',total],['Total para conciliação (comprovantes e dinheiro)',verified]]){const box=v92Node('div');box.append(v92Node('small',{},label),v92Node('strong',{},v92Money(value)));grid.appendChild(box)}financeContent.appendChild(grid);
+   financeContent.appendChild(v92Node('p',{class:'v92-muted'},'Total declarado pelo operador (informativo): '+v92Money(declared)));
+   if(fields.pagamento_os.value==='FATURADO')financeContent.appendChild(v92Node('div',{class:'v9319-finance-ok'},'OS faturada: a conciliação por comprovantes não é obrigatória.'));
+   else if(unknown)financeContent.appendChild(v92Node('div',{class:'v9319-finance-alert'},'CONCILIAÇÃO NÃO VALIDADA: '+unknown+' pagamento(s) sem valor identificado no comprovante ativo. Valor comprovado até agora: '+v92Money(verified)+'. Não é possível considerar a OS conciliada. A exigência de justificativa financeira segue a parametrização.'));
+   else if(diff===0)financeContent.appendChild(v92Node('div',{class:'v9319-finance-ok'},'Valores para conciliação fecham com os serviços. Diferença: R$ 0,00. Dinheiro permanece sujeito à declaração de recebimento.'));
+   else financeContent.appendChild(v92Node('div',{class:'v9319-finance-alert'},(diff<0?'ATENÇÃO: faltam ':'ATENÇÃO: os comprovantes excedem os serviços em ')+v92Money(Math.abs(diff))+' para conciliar esta OS. A comparação considera os valores identificados nos comprovantes, não os declarados. Corrija os pagamentos/comprovantes. A exigência de justificativa financeira segue a parametrização.'));
+   return {total,paid:verified,declared,diff,unknown};
+ }calcReady=true;
+  const payHint=v92Node('p',{class:'v92-muted'});payBox.before(payHint);
+  function refreshPaymentEligibility(){
+    const eligible=client&&['mensal','quinzenal'].includes(String(client.period||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim());
+    const billed=fields.pagamento_os.value==='FATURADO';
+    payHint.textContent=billed?'OS faturada: comprovantes não são obrigatórios. Pagamentos já registrados são preservados, se existirem.':'OS à vista: informe os pagamentos e os respectivos comprovantes.';
+    if(billed&&!eligible)payHint.textContent='ATENÇÃO: cliente não habilitado para faturamento. Selecione À vista.';
+  }
+  fields.pagamento_os.onchange=()=>{refreshPaymentEligibility();calc()};
+  refreshPaymentEligibility();calc();
+ let finLabel=v92Node('label',{},'Justificativa financeira para diferença entre serviços e pagamentos');finLabel.style.display='block';finLabel.style.fontWeight='600';finLabel.style.margin='14px 0 6px';finance.appendChild(finLabel);let fin=v92Node('textarea',{rows:'3',placeholder:reasonSettings.financial?'Justificativa financeira total, quando houver diferença (mínimo 10 caracteres)':'Justificativa financeira total (opcional)'});fin.value=p.justificativa_financeira||'';fin.style.width='100%';finLabel.appendChild(fin);root.appendChild(v92Node('h3',{},'Justificativas e Identificação'));let why=v92Node('textarea',{rows:'3',placeholder:reasonSettings.other?'Justificativa para outras alterações, quando houver mudanças (mínimo 10 caracteres)':'Justificativa para outras alterações (opcional)'});why.value=p.justificativa_geral||'';root.appendChild(why);root.appendChild(v92Node('p',{class:'v92-muted'},'Administrador autenticado: '+adminIdentity.nome+' ('+adminIdentity.login+')'));
+ 
+ // Mensagens de validação independentes do formulário, sempre visíveis em popup.
+ function showSaveIssue(message){
+   const d=document.createElement('dialog');
+   d.setAttribute('aria-label','Não foi possível salvar a OS');
+   d.style.cssText='border:0;border-top:5px solid #cc092f;border-radius:12px;padding:26px;max-width:min(540px,calc(100vw - 32px));width:100%;box-shadow:0 18px 65px #0005;color:#17202a';
+   const h=document.createElement('h3');h.textContent='Não foi possível salvar as alterações';h.style.margin='0 0 14px';
+   const p=document.createElement('p');p.textContent=message||'Verifique os campos obrigatórios e tente novamente.';p.style.cssText='white-space:pre-wrap;line-height:1.5';
+   const hint=document.createElement('p');hint.textContent='Corrija a pendência indicada e clique novamente em Salvar alterações.';hint.style.cssText='font-size:13px;color:#555';
+   const b=document.createElement('button');b.type='button';b.textContent='Entendi, voltar à edição';b.style.cssText='background:#c8102e;color:white;border:0;border-radius:7px;padding:12px 18px;cursor:pointer;font-weight:bold;margin-top:12px';
+   b.onclick=()=>d.close();d.addEventListener('close',()=>d.remove(),{once:true});
+   d.append(h,p,hint,b);document.body.appendChild(d);d.showModal();b.focus();
+ }
+ // Monitoramento de alterações reais, com referência ao estado original.
+ const tracked=[];
+ function observeChange(el,original,label,financial=false,format=v=>String(v??'')){
+   const parent=el.closest('label')||el.parentElement;
+   const note=v92Node('div',{class:'v9325-original'});
+   note.style.cssText='display:none;color:#b42335;font-size:12px;font-weight:600;margin:4px 0 7px;line-height:1.4';
+   el.insertAdjacentElement('afterend',note);
+   const baseline=format(original);
+   const rec={el,original:baseline,label,financial,changed:false,note,format};tracked.push(rec);
+   const check=()=>{
+     rec.changed=format(el.value)!==baseline;
+     note.style.display=rec.changed?'block':'none';
+     note.textContent=rec.changed?'↶ Valor original — '+label+': '+(baseline||'(vazio)'):'';
+     el.classList.toggle('v9325-modified',rec.changed);
+     if(typeof updateChangeSummary==='function')updateChangeSummary();
+   };
+   rec.check=check;
+   el.addEventListener('input',check);el.addEventListener('change',check);
+   return rec;
+ }
+ const normalizeText=v=>String(v??'').trim();
+ const normalizeMoney=v=>String(cents(v));
+ Object.entries(fields).forEach(([k,el])=>{
+   const original=k==='cliente_nome'?(x.cliente_id??p.cliente_id??''):(x[k]??p[k]??'');
+   observeChange(el,original,k==='cliente_nome'?'Cliente':k,false,normalizeText);
+ });
+ const initialItemRows=items.map(i=>i.row),initialPayCards=pays.map(i=>i.card);
+ items.forEach((i,index)=>{
+   observeChange(i.sel,i.sel.value,'Serviço '+(index+1),true,normalizeText);
+   observeChange(i.price,((Number(i.old.preco_cobrado_centavos)||0)/100).toFixed(2),'Preço do serviço '+(index+1),true,normalizeMoney);
+ });
+ pays.forEach((i,index)=>{
+   observeChange(i.method,i.old.condicao_pagamento||'PIX','Forma de pagamento '+(index+1),true,normalizeText);
+   observeChange(i.amount,((Number(i.old.valor_centavos)||0)/100).toFixed(2),'Valor do pagamento '+(index+1),true,normalizeMoney);
+ });
+ const changesBox=v92Node('section',{class:'v9325-changes'});
+ changesBox.style.cssText='border:1px solid #d5dce6;border-radius:10px;padding:14px;margin:18px 0;background:#f8fafc';
+ const changesTitle=v92Node('strong',{},'Alterações identificadas em tempo real');
+ const changesList=v92Node('div');changesList.style.cssText='margin-top:8px;font-size:13px;line-height:1.65';
+ changesBox.append(changesTitle,changesList);root.appendChild(changesBox);
+ function actualChanges(){
+   tracked.forEach(t=>{const isChanged=t.format(t.el.value)!==t.original;t.changed=isChanged;t.note.style.display=isChanged?'block':'none';t.note.textContent=isChanged?'↶ Valor original — '+t.label+': '+(t.original||'(vazio)'):'';t.el.classList.toggle('v9325-modified',isChanged)});
+   const changes=tracked.filter(t=>t.changed).map(t=>({label:t.label,financial:t.financial,original:t.original,now:t.el.value}));
+   const currentItemRows=items.map(i=>i.row),currentPayCards=pays.map(i=>i.card);
+   if(initialItemRows.some(r=>!currentItemRows.includes(r))||currentItemRows.some(r=>!initialItemRows.includes(r)))changes.push({label:'Inclusão ou exclusão de serviço',financial:true});
+   if(initialPayCards.some(r=>!currentPayCards.includes(r))||currentPayCards.some(r=>!initialPayCards.includes(r)))changes.push({label:'Inclusão ou exclusão de pagamento',financial:true});
+   for(const [kind,doc] of Object.entries(docs)){
+     if(doc.file.files.length||doc.ck.checked)changes.push({label:'Documento '+kind+' substituído ou removido',financial:false});
+   }
+   for(const pay of pays){
+     if(pay.attachment.file.files.length||pay.attachment.ck.checked)changes.push({label:'Comprovante substituído ou removido',financial:true});
+   }
+   return changes;
+ }
+ function updateChangeSummary(){
+   const changes=actualChanges();changesList.replaceChildren();
+   if(!changes.length){changesList.textContent='Nenhuma alteração nos dados operacionais. Justificativas de inconsistências financeiras continuam independentes.';return}
+   for(const c of changes){const line=v92Node('div',{},'• '+c.label+(c.original!==undefined?' · Original: '+(c.original||'(vazio)')+' → Atual: '+c.now:''));changesList.appendChild(line)}
+ }
+ // Captura também inclusões, exclusões e substituições, que não são campos textuais.
+ root.addEventListener('click',()=>queueMicrotask(updateChangeSummary));
+ root.addEventListener('change',()=>queueMicrotask(updateChangeSummary));
+ updateChangeSummary();
+ let feedback=v92Node('p');root.appendChild(feedback);let actions=v92Node('div',{class:'v92-actions'});root.appendChild(actions);let cancel=v92Node('button',{type:'button'},'Cancelar');cancel.onclick=()=>v9318CloseOsDialog();let save=v92Node('button',{type:'button'},'Salvar alterações');let release=v92Node('button',{type:'button',class:'v9328-release'},'Liberação Administrativa');actions.append(cancel,save,release);
+ async function performSave(alsoRelease=false){try{let {diff,unknown}=calc();const changes=actualChanges();const pending=[];
+ if(reasonSettings.other&&changes.some(c=>!c.financial||/Serviço|Preço do serviço|serviço/.test(c.label))&&why.value.trim().length<10)pending.push('Justificativa geral: alterações não financeiras ('+changes.filter(c=>!c.financial).map(c=>c.label).join(', ')+').');
+ if(!modernReasons&&changes.some(c=>c.financial)&&fin.value.trim().length<10)pending.push('Justificativa financeira: alterações em serviços, preços ou pagamentos ('+changes.filter(c=>c.financial).map(c=>c.label).join(', ')+').');
+ if(reasonSettings.financial&&(Math.abs(diff)>reviewTolerance||unknown)&&fields.pagamento_os.value.toUpperCase()!=='FATURADO'&&fin.value.trim().length<10)pending.push('Conciliação financeira: divergência ou comprovante sem valor identificado.');
+ for(const i of pays){const reasons=paymentReviewReasons(i);if(reasonSettings.proof&&reasons.length&&i.justification.value.trim().length<10)pending.push('Justificativa individual do comprovante: '+reasons.join('; ')+'.')}
+ if(pending.length)throw Error('Pendências para salvar:\n\n'+pending.map((x,i)=>(i+1)+'. '+x).join('\n'));if(fields.pagamento_os.value==='FATURADO'&&!['mensal','quinzenal'].includes(String(client.period||'').toLowerCase()))throw Error('Cliente não autorizado para faturamento.');let updatedItems=items.map(i=>{const s=i.selectedService();if(!s)throw Error('Selecione um serviço do catálogo.');return {...i.old,servico:s.name,servico_erp_id:s.erp_id||s.id_interno,preco_referencia_centavos:v92Price(s,client),preco_cobrado_centavos:cents(i.price.value)}});let updatedPays=[];for(const i of pays){
+  if(i.attachment.file.files[0]&&!i.getReading())throw Error('Aguarde a leitura Vision do novo comprovante.');
+  const reasons=paymentReviewReasons(i);
+  if(reasonSettings.proof&&reasons.length&&i.justification.value.trim().length<10)throw Error('Justificativa individual obrigatória para o pagamento ('+reasons.join('; ')+'). Mínimo de 10 caracteres.');
+let q={...i.old,condicao_pagamento:i.method.value,valor_centavos:cents(i.amount.value),justificativa_divergencia:i.method.value==='DINHEIRO'?'':i.justification.value.trim(),declaracao_recebimento_dinheiro:i.cashDeclaration.value.trim()};if(i.attachment.ck.checked){delete q.comprovante_arquivo;delete q.comprovante_leitura}if(i.attachment.file.files[0]){if(!i.getReading())throw Error('Aguarde a leitura Vision de todos os novos comprovantes.');q.comprovante_imagem=await v92FileData(i.attachment.file.files[0]);delete q.comprovante_arquivo;q.comprovante_leitura=i.getReading();q.comprovante_anterior_auditoria={arquivo:i.old.comprovante_arquivo||null,leitura:i.old.comprovante_leitura||null}}updatedPays.push(q)}if(fields.pagamento_os.value==='A_VISTA'){if(!updatedPays.length)throw Error('OS à vista exige pagamento informado.');if(updatedPays.some(q=>q.condicao_pagamento!=='DINHEIRO'&&!q.comprovante_arquivo&&!q.comprovante_imagem))throw Error('Pagamento à vista exige comprovante (exceto dinheiro).')}let updatedDocs={};for(const [k,v] of Object.entries(docs)){updatedDocs[k]=v.ck.checked?null:v.old||null;if(v.file.files[0])updatedDocs[k]=await v92FileData(v.file.files[0])}let updatedFields=Object.fromEntries(Object.entries(fields).map(([k,i])=>[k,i.value]));updatedFields.cliente_id=customerSelect.value;updatedFields.cliente_nome=adminCatalog.clients.find(c=>String(c.id_interno)===String(customerSelect.value))?.name||'';let payload={os_id:x.id,campos:updatedFields,itens:updatedItems,pagamentos:updatedPays,documentos:updatedDocs,justificativa:why.value,justificativa_financeira:fin.value};if(!confirm('Confirmar edição da OS '+x.id_interno+'?\nJustificativa: '+why.value+'\nTotal: '+v92Money(updatedItems.reduce((a,i)=>a+i.preco_cobrado_centavos,0))))return;save.disabled=true;feedback.textContent='Salvando...';let res=await fetchJSON('/api/admin/os/editar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+ if(alsoRelease){feedback.textContent='Alterações salvas. Validando liberação...';await fetchJSON('/api/admin/os/liberar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({os_id:x.id,justificativa:why.value,justificativa_financeira:fin.value,justificativas_comprovantes:pays.map(i=>i.method.value==='DINHEIRO'?'':i.justification.value.trim()),declaracoes_dinheiro:pays.map(i=>i.cashDeclaration.value.trim())})});}
+ feedback.textContent=alsoRelease?'OS liberada pela administração.':'Alterações gravadas: '+res.alteracoes;v9318CloseOsDialog();v9330CloseDetail();await loadReview();v9330CloseDetail(alsoRelease?x.id_interno+' liberada pela administração com sucesso.':x.id_interno+' salva com sucesso.')}catch(e){feedback.textContent='Erro: '+(e?.message||String(e));showSaveIssue(e?.message||String(e))}finally{save.disabled=false;release.disabled=false}}
+ save.onclick=()=>performSave(false);
+ release.onclick=async()=>{
+ const missingCash=pays.filter(i=>i.method.value==='DINHEIRO'&&!cashReceiptValid(i.cashDeclaration.value,cents(i.amount.value)));
+ if(missingCash.length){showSaveIssue('Declare o recebimento em cada pagamento em dinheiro, incluindo o valor correspondente. Ex.: Recebi R$ 120,00 em dinheiro referente a esta OS.');missingCash[0].cashDeclaration.focus();return}
+ if(!confirm('Confirmar LIBERAÇÃO ADMINISTRATIVA da OS '+x.id_interno+'?\nAs divergências justificadas serão aceitas e a ação ficará registrada para auditoria.'))return;
+ const changes=actualChanges();
+ if(changes.length){release.disabled=true;await performSave(true);return}
+ try{release.disabled=true;await fetchJSON('/api/admin/os/liberar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({os_id:x.id,justificativa:why.value,justificativa_financeira:fin.value,justificativas_comprovantes:pays.map(i=>i.method.value==='DINHEIRO'?'':i.justification.value.trim()),declaracoes_dinheiro:pays.map(i=>i.cashDeclaration.value.trim())})});v9318CloseOsDialog();v9330CloseDetail();await loadReview();v9330CloseDetail(x.id_interno+' liberada pela administração com sucesso.')}
+ catch(e){showSaveIssue(e?.message||String(e))}finally{release.disabled=false}
+ };
+ dialog.showModal();dialog.querySelector('.v9318-modal-body').scrollTop=0;
+}
+function cashReceiptValid(text,cents){text=String(text||'').trim();if(text.length<10||! /\b(recebi|recebemos|recebido|recebida)\b/i.test(text))return false;return (text.match(/(?:\d{1,3}(?:\.\d{3})+|\d+),\d{2}/g)||[]).some(v=>Number(v.replace(/\./g,'').replace(',',''))===cents)}
+function v9327Decode(v){if(typeof v==='string'){try{if(/^\s*[\[{]/.test(v))return JSON.parse(v)}catch(e){}}return v}
+function v9327Readable(v){if(v==null||v==='')return 'Não informado';if(typeof v==='boolean')return v?'Sim':'Não';return String(v)}
+function v9327Money(c){return v92Money(Number(c||0))}
+function v9327ChangeLines(c){
+ const k=String(c.campo||''),a=v9327Decode(c.antes),b=v9327Decode(c.depois),out=[];
+ const add=(label,before,after)=>{if(String(before)===String(after))return;out.push({label,before:v9327Readable(before),after:v9327Readable(after)})};
+ const labels={cliente_nome:'Cliente',cliente_id:'Cliente',placa:'Placa',marca:'Marca',modelo:'Modelo',local_vistoria:'Local da vistoria',condutor:'Condutor',cpf:'CPF',email:'E-mail',celular:'Celular',requisicao_cliente:'Requisição do cliente',observacoes:'Observações',forma_pagamento:'Forma de pagamento'};
+ if(k==='documentos_arquivos'&&a&&b&&typeof a==='object'&&typeof b==='object'){
+  const titles={CNH:'CNH',CRLV:'CRLV',REQUISICAO:'Requisição'};
+  for(const key of new Set([...Object.keys(a),...Object.keys(b)])){if(a[key]===b[key])continue;out.push({label:'Documento '+(titles[key]||key),description:!a[key]?'Incluído':!b[key]?'Removido':'Substituído'})}
+ }else if(k==='itens'&&Array.isArray(a)&&Array.isArray(b)){
+  const key=x=>String(x?.servico||'');
+  const count=arr=>{const m=new Map();arr.forEach(x=>{const q=key(x);m.set(q,(m.get(q)||0)+1)});return m};
+  const ca=count(a),cb=count(b);
+  for(const name of new Set([...ca.keys(),...cb.keys()])){
+   const delta=(cb.get(name)||0)-(ca.get(name)||0);
+   if(delta>0)out.push({label:'Serviço',description:'Incluído: '+name+(delta>1?' ('+delta+' unidades)':'')});
+   if(delta<0)out.push({label:'Serviço',description:'Removido: '+name+(delta< -1?' ('+(-delta)+' unidades)':'')});
+  }
+  const oldGroups=new Map(),newGroups=new Map();
+  a.forEach(x=>{const q=key(x);if(!oldGroups.has(q))oldGroups.set(q,[]);oldGroups.get(q).push(x)});
+  b.forEach(x=>{const q=key(x);if(!newGroups.has(q))newGroups.set(q,[]);newGroups.get(q).push(x)});
+  for(const name of new Set([...oldGroups.keys(),...newGroups.keys()])){
+   const old=oldGroups.get(name)||[],now=newGroups.get(name)||[];
+   for(let i=0;i<Math.min(old.length,now.length);i++)if(Number(old[i].preco_cobrado_centavos)!==Number(now[i].preco_cobrado_centavos))add('Preço — '+name,v9327Money(old[i].preco_cobrado_centavos),v9327Money(now[i].preco_cobrado_centavos));
+  }
+ }else if(k==='pagamentos'&&Array.isArray(a)&&Array.isArray(b)){
+  for(let i=0;i<Math.max(a.length,b.length);i++){
+   const p=a[i],q=b[i],label='Pagamento '+(i+1);
+   if(!p){out.push({label,description:'Incluído'});continue}
+   if(!q){out.push({label,description:'Removido'});continue}
+   if(p.condicao_pagamento!==q.condicao_pagamento)add(label+' — Forma',p.condicao_pagamento,q.condicao_pagamento);
+   if(Number(p.valor_centavos)!==Number(q.valor_centavos))add(label+' — Valor',v9327Money(p.valor_centavos),v9327Money(q.valor_centavos));
+   
+   if((p.comprovante_arquivo||'')!==(q.comprovante_arquivo||''))out.push({label:label+' — Comprovante',description:!p.comprovante_arquivo?'Incluído':!q.comprovante_arquivo?'Removido':'Substituído'});
+  }
+ }else if(!['itens','pagamentos','documentos_arquivos'].includes(k)){
+  if(a&&typeof a==='object'||b&&typeof b==='object'){out.push({label:labels[k]||k,description:'Dados atualizados'});}
+  else add(labels[k]||k,a,b);
+ }
+ return out;
+}
+async function showV92History(id){
+ const root=document.getElementById('v92History');root.replaceChildren();root.appendChild(v92Node('h3',{},'Histórico de alterações'));
+ try{
+  const r=await fetchJSON('/api/admin/os/historico?id='+encodeURIComponent(id));
+  if(!r.registros.length){root.appendChild(v92Node('p',{},'Nenhuma edição administrativa registrada.'));return}
+  (r.liberacoes||[]).forEach(l=>{
+   const card=v92Node('div',{class:'v92-hist v9327-history'});
+   const stamp=String(l.liberado_em||'').replace('T',' ');
+   card.appendChild(v92Node('strong',{},'Liberação administrativa · '+stamp+' · '+l.operador));
+   let divergencias=[];try{divergencias=JSON.parse(l.divergencias_json||'[]')}catch(e){}
+   card.appendChild(v92Node('p',{},'Status: Liberada pela administração'));
+   if(divergencias.length)card.appendChild(v92Node('p',{},'Divergências aceitas: '+divergencias.join('; ')));
+   let justificativas={};try{justificativas=JSON.parse(l.justificativas_json||'{}')}catch(e){}
+   (justificativas.dinheiro||[]).forEach(d=>card.appendChild(v92Node('p',{},'Dinheiro — pagamento '+d.pagamento+': '+d.declaracao+' · '+d.operador)));
+   if(justificativas.geral)card.appendChild(v92Node('p',{},'Outras alterações: '+justificativas.geral));
+   if(justificativas.financeira)card.appendChild(v92Node('p',{},'Conciliação financeira: '+justificativas.financeira));
+   (justificativas.comprovantes||[]).forEach(j=>card.appendChild(v92Node('p',{},'Comprovante '+j.pagamento+' — '+j.forma+': '+j.justificativa)));
+   root.appendChild(card);
+  });
+  r.registros.forEach(h=>{
+   let changes=[];try{changes=JSON.parse(h.alteracoes_json||'[]')}catch(e){}
+   const details=changes.flatMap(v9327ChangeLines);
+   const specific=[];
+   for(const c of changes){if(c.campo!=='pagamentos')continue;
+    const a=v9327Decode(c.antes)||[],b=v9327Decode(c.depois)||[];
+    for(let i=0;i<b.length;i++){const previous=String(a[i]?.justificativa_divergencia||'').trim(),current=String(b[i]?.justificativa_divergencia||'').trim();
+      if(current&&current!==previous)specific.push({label:'Comprovante '+(i+1)+' — '+(b[i].condicao_pagamento||'Pagamento'),text:current});
+    }
+   }
+   const card=v92Node('div',{class:'v92-hist v9327-history'});
+   const header=v92Node('div',{class:'v9327-history-head'});
+   const stamp=String(h.registrado_em||'').replace('T',' ');const match=stamp.match(/^(\d{4})-(\d{2})-(\d{2})\s+(.+)$/);
+   header.appendChild(v92Node('strong',{},match?`${match[3]}/${match[2]}/${match[1]} às ${match[4]}`:stamp));
+   header.appendChild(v92Node('span',{},h.operador||'Usuário não identificado'));card.appendChild(header);
+   if(details.length){
+    const table=v92Node('table',{class:'v9327-history-table'});
+    const tr=v92Node('tr');tr.append(v92Node('th',{},'Parâmetro'),v92Node('th',{},'Alteração realizada'));table.appendChild(tr);
+    details.forEach(d=>{const row=v92Node('tr');row.appendChild(v92Node('td',{},d.label));const value=d.description||((d.before==='Não informado'?'Incluído: ':d.after==='Não informado'?'Removido: ':'')+(d.before==='Não informado'?d.after:d.after==='Não informado'?d.before:d.before+' → '+d.after));row.appendChild(v92Node('td',{},value));table.appendChild(row)});
+    card.appendChild(table);
+   }else card.appendChild(v92Node('p',{},'Nenhuma alteração operacional identificada neste registro.'));
+   if(h.justificativa||h.justificativa_financeira||specific.length){
+    const just=v92Node('div',{class:'v9327-history-just'});just.appendChild(v92Node('strong',{},'JUSTIFICATIVAS REGISTRADAS'));
+    if(h.justificativa)just.appendChild(v92Node('p',{},'Geral: '+h.justificativa));
+    if(h.justificativa_financeira)just.appendChild(v92Node('p',{},'Financeira — Conciliação da OS: '+h.justificativa_financeira));specific.forEach(j=>just.appendChild(v92Node('p',{},j.label+': '+j.text)));
+    card.appendChild(just);
+   }
+   root.appendChild(card);
+  });
+ }catch(e){root.textContent='Não foi possível carregar histórico: '+e.message}
+}
+</script><section id="adminUserPanel93" class="v935-admin-panel" hidden>
+ <article><h3 id="adminFormTitle">Cadastro de administradores</h3>
+ <p class="v92-muted">Acesso exclusivo à Administração. Senhas armazenadas de forma segura; ao editar, deixe os campos de senha vazios para preservá-la.</p>
+ <form onsubmit="event.preventDefault();adminCreateUser()">
+ <div class="user-grid">
+ <div class="user-field"><label for="adminNewName">Nome completo *</label><input id="adminNewName" required autocomplete="name" placeholder="Nome completo"></div>
+ <div class="user-field"><label for="adminNewLogin">Usuário de acesso *</label><input id="adminNewLogin" required autocomplete="off" placeholder="Ex.: joao.silva"></div>
+ <div class="user-field"><label for="adminNewPassword">Senha</label><input id="adminNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Mínimo de 6 caracteres"></div>
+ <div class="user-field"><label for="adminNewConfirm">Confirmar senha</label><input id="adminNewConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Repita a senha"></div>
+ <div class="user-field"><label for="adminNewActive">Situação do acesso</label><select id="adminNewActive"><option value="ativo">Ativo</option><option value="bloqueado">Bloqueado</option></select></div>
+ </div>
+ <p id="adminPasswordHint" class="v92-muted">Senha obrigatória no cadastro. Mínimo de 6 caracteres.</p>
+ <div class="v935-form-actions"><button type="button" onclick="adminResetForm()">Limpar</button><button type="submit" class="v935-save" id="adminSaveButton">Salvar administrador</button></div>
+ </form></article>
+ <article><h3>Administradores cadastrados</h3><label for="adminSearch">Pesquisar</label><input id="adminSearch" placeholder="Buscar por nome ou usuário" oninput="adminRenderUsers()"><div id="adminUsers93"></div></article>
+ </section><dialog id="adminEditDialog" class="v937-dialog" aria-labelledby="adminEditTitle" oncancel="adminEditId=null">
+ <div class="modal-head"><h2 id="adminEditTitle">Editar administrador</h2><button type="button" class="secondary" onclick="adminCloseEdit()" aria-label="Fechar janela">✕</button></div>
+ <p class="modal-sub">Alterações feitas aqui não interferem no formulário de novo administrador.</p>
+ <form id="adminEditForm" onsubmit="adminSaveEdit(event)">
+ <div class="user-grid">
+ <div class="user-field"><label for="adminEditName">Nome completo *</label><input id="adminEditName" required></div>
+ <div class="user-field"><label for="adminEditLogin">Usuário de acesso *</label><input id="adminEditLogin" required autocomplete="off"></div>
+ <div class="user-field"><label for="adminEditActive">Situação do acesso</label><select id="adminEditActive"><option value="ativo">Ativo</option><option value="bloqueado">Bloqueado</option></select></div>
+ </div>
+ <div class="password-preserved"><b>Senha atual preservada</b><p>Por segurança, a senha não é exibida nem recuperada do banco. Sem marcar a opção abaixo, ela permanecerá inalterada.</p><label><input id="adminEditPasswordEnabled" type="checkbox" onchange="adminToggleEditPassword()"> Definir nova senha</label></div>
+ <div id="adminEditPasswordFields" hidden><div class="user-grid">
+ <div class="user-field"><label for="adminEditPassword">Nova senha *</label><div class="password-wrap"><input id="adminEditPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"><button tabindex="-1" type="button" class="eye-button" onclick="togglePassword('adminEditPassword',this)" aria-label="Mostrar nova senha" title="Mostrar nova senha">◉</button></div></div>
+ <div class="user-field"><label for="adminEditConfirm">Confirmar nova senha *</label><div class="password-wrap"><input id="adminEditConfirm" type="password" minlength="6" autocomplete="new-password" placeholder="Repita a nova senha"><button tabindex="-1" type="button" class="eye-button" onclick="togglePassword('adminEditConfirm',this)" aria-label="Mostrar confirmação" title="Mostrar confirmação">◉</button></div></div>
+ </div></div>
+ <div id="adminEditFeedback" class="feedback" role="status"></div>
+ <div class="actions"><button type="button" class="secondary" onclick="adminCloseEdit()">Cancelar</button><button type="submit" class="primary">Salvar alterações</button></div>
+ </form></dialog>
+<script id="v9311-isolate-admin-panel">
+// O painel de administradores era um elemento solto após as páginas do Gerenciador.
+// Recolocá-lo no destino correto impede que apareça em Revisão Administrativa ou outras telas.
+(function(){
+  const panel=document.getElementById('adminUserPanel93');
+  const mount=document.getElementById('adminUsersMount');
+  if(!panel||!mount)return;
+  mount.appendChild(panel);
+  panel.hidden=false;
+})();
+</script><script src="parametros_admin_v7.js"></script><script src="integracoes_entrada_v4.js"></script></body></html>

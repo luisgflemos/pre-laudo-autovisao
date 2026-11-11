@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pré-Laudo Vision — Laboratório</title>
+<style>
+*{box-sizing:border-box}body{font-family:Arial,sans-serif;background:#f4f4f4;color:#171717;margin:0}
+main{max-width:900px;margin:25px auto;padding:0 15px}.card{background:#fff;border:1px solid #ddd;border-radius:18px;padding:20px;margin-bottom:15px}
+h1{margin:0 0 5px}.sub{color:#666;margin:0 0 18px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{height:58px;border:1px solid #aaa;border-radius:12px;background:#f7f7f7;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer}
+input[type=file]{display:none}button{width:100%;height:58px;border:0;border-radius:12px;background:#111;color:#fff;font-size:17px;font-weight:800;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.45;cursor:not-allowed}#preview{display:none;max-width:100%;max-height:420px;margin:15px auto;border-radius:10px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.field{background:#f7f8f9;border:1px solid #ddd;border-radius:12px;padding:13px;min-height:82px}
+.field b{display:block;margin-bottom:7px}.value{font-size:19px;font-weight:800;word-break:break-all}
+.status{margin-top:13px;font-weight:800}.pending{background:#fff8df;border:1px solid #d6a000;color:#704f00;border-radius:12px;padding:13px;margin-top:13px}
+.ok{color:#087a2c}.err{color:#b00020}pre{white-space:pre-wrap;word-break:break-word;background:#f7f7f7;padding:10px;border-radius:10px;border:1px solid #ddd}
+@media(max-width:650px){.actions,.grid{grid-template-columns:1fr}}
+</style></head><body><main>
+<div class="card"><h1>Pré-Laudo Vision</h1><p class="sub">Laboratório local — leitura multimodal do comprovante</p>
+<div class="actions"><label>📷 Tirar foto<input id="camera" type="file" accept="image/*" capture="environment"></label><label>📎 Anexar<input id="attach" type="file" accept="image/*"></label></div>
+<img id="preview"><div id="file"></div><button id="read" disabled>🔎 Ler comprovante com Vision</button><div id="status" class="status">Aguardando comprovante.</div></div>
+<div class="card"><div class="grid">
+<div class="field"><b>Condição</b><span id="condition" class="value">—</span></div>
+<div class="field"><b>Valor</b><span id="amount" class="value">—</span></div>
+<div class="field"><b>Data/Hora</b><span id="datetime" class="value">—</span></div>
+<div class="field"><b>ID da Transação</b><span id="tid" class="value">—</span></div>
+</div>
+<div class="pending"><b>⚠️ TESTE / VALIDAÇÃO ADMINISTRATIVA</b><br>O Vision apenas extrai os dados. Nesta POC nenhuma leitura aprova automaticamente o pagamento.</div>
+<details><summary>Diagnóstico</summary><p><b>Tipo do identificador:</b> <span id="idtype">—</span></p><p><b>Observação:</b> <span id="obs">—</span></p><p><b>Modelo:</b> <span id="model">—</span></p><pre id="raw">—</pre></details></div>
+<script>
+let selected=null; const $=id=>document.getElementById(id);
+function choose(file){
+ selected=file;$('file').textContent='🖼️ '+file.name;$('preview').src=URL.createObjectURL(file);$('preview').style.display='block';$('read').disabled=false;
+ $('status').textContent='Pronto para leitura.';['condition','amount','datetime','tid','idtype','obs','model'].forEach(x=>$(x).textContent='—');$('raw').textContent='—';
+}
+['camera','attach'].forEach(id=>$(id).addEventListener('change',e=>{if(e.target.files[0])choose(e.target.files[0])}));
+function dataURL(file){return new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+$('read').onclick=async()=>{
+ if(!selected)return;$('read').disabled=true;$('status').textContent='⏳ Vision analisando o comprovante...';
+ try{
+  let image=await dataURL(selected);
+  let r=await fetch('/api/ler-comprovante',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image})});
+  let j=await r.json(); if(!j.ok)throw new Error(j.erro||'Falha na leitura');
+  let x=j.resultado||{};
+  $('condition').textContent=x.condicao||'Não identificado';
+  $('amount').textContent=typeof x.valor==='number'?x.valor.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'Não identificado';
+  $('datetime').textContent=x.data_hora||'Não identificado';
+  $('tid').textContent=x.identificador_transacao||'Não identificado';
+  $('idtype').textContent=x.tipo_identificador||'—';$('obs').textContent=x.observacao||'—';$('model').textContent=j.modelo||'—';
+  $('raw').textContent=JSON.stringify(x,null,2);$('status').innerHTML='<span class="ok">✓ Leitura concluída</span>';
+ }catch(e){$('status').innerHTML='<span class="err">✕ '+e.message+'</span>'}
+ finally{$('read').disabled=false}
+};
+</script></main></body></html>
