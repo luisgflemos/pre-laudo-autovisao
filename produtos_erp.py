@@ -15,11 +15,25 @@ def snapshot(con):
  row=con.execute('SELECT data_json FROM erp_produtos_estado WHERE id=1').fetchone();return json.loads(row[0]) if row else None
 def cached(con):
  if not (snapshot(con) or {}).get('ultima_atualizacao'):return None
- return [json.loads(r[0]) for r in con.execute('SELECT data_json FROM erp_produtos ORDER BY local_id')]
+ return [classify_catalog_item(json.loads(r[0])) for r in con.execute('SELECT data_json FROM erp_produtos ORDER BY local_id')]
 def is_service(row):
  category=''.join(c for c in unicodedata.normalize('NFKD',str(row.get('categoria') or '')) if not unicodedata.combining(c))
  category=' '.join(category.casefold().split())
  return str(row.get('codigo') or '').strip().startswith('2') and category!='aporte de socios'
+
+def classify_catalog_item(item):
+ if item.get('historical_only'):
+  return item
+ service = is_service({'codigo': item['code'], 'categoria': item.get('categoria')})
+ kind = ('KIT' if item['name'].upper().startswith('KIT') else 'Individual') if service else None
+ return {
+  **item,
+  'kind': kind,
+  'servico_erp': service,
+  'operacional': service,
+  'selecionavel': service and item.get('ativo_erp') is True,
+  'vinculo_preco_pendente': False,
+ }
 
 def map_products(rows,baseline,previous):
  if not rows:raise ValueError('O ERP retornou cadastro vazio. A última base foi preservada.')
@@ -33,12 +47,11 @@ def map_products(rows,baseline,previous):
   if old is None and code and codes[code]==1:old=base_by_code.get(code)
   local=old['id_interno'] if old else 'ERPPROD_'+sid
   if local in used:raise ValueError('Conflito de identidade de produtos/serviços.')
-  used.add(local);service=is_service(r);operational=service and bool(old and old.get('operacional',old.get('kind') in ('Individual','KIT')))
-  # Mudança de código exige revalidar o vínculo de preços, sem remapear valores.
+  used.add(local)
+  # Os preços ERP são importados pelo código atual na mesma transação.
   price_code=old.get('codigo_preco_legado',old.get('code')) if old else None
-  selected=operational and flag=='1' and price_code==code
   linked+=bool(old and old.get('kind') in ('Individual','KIT'))
-  result.append({'id_interno':local,'erp_id':sid,'code':code,'name':name,'kind':old.get('kind') if old else None,'servico_erp':service,'operacional':operational,'ativo_erp':flag=='1','selecionavel':selected,'codigo_preco_legado':price_code,'vinculo_preco_pendente':operational and price_code!=code,'produto_servico':r.get('produto_servico'),'tipo_fiscal':r.get('tipo'),'categoria':r.get('categoria'),'categoria_erp_id':r.get('IDCategoria'),'subcategoria':r.get('subcategoria'),'subcategoria_erp_id':r.get('IDSubcategoria'),'unidade':r.get('unidade'),'unidade_erp_id':r.get('unidade_id'),'data_alteracao_erp':r.get('data_alteracao') or r.get('dt_alteracao'),'historical_only':False})
+  result.append(classify_catalog_item({'id_interno':local,'erp_id':sid,'code':code,'name':name,'ativo_erp':flag=='1','codigo_preco_legado':price_code,'produto_servico':r.get('produto_servico'),'tipo_fiscal':r.get('tipo'),'categoria':r.get('categoria'),'categoria_erp_id':r.get('IDCategoria'),'subcategoria':r.get('subcategoria'),'subcategoria_erp_id':r.get('IDSubcategoria'),'unidade':r.get('unidade'),'unidade_erp_id':r.get('unidade_id'),'data_alteracao_erp':r.get('data_alteracao') or r.get('dt_alteracao'),'historical_only':False}))
  for old in [*previous,*baseline]:
   if old['id_interno'] not in used:result.append({**old,'ativo_erp':False,'selecionavel':False,'historical_only':True});used.add(old['id_interno'])
  return result,{'total_erp':len(rows),'servicos_erp':sum(is_service(r) for r in rows),'servicos_ativos_erp':sum(is_service(r) and str(r.get('ativo_inativo'))=='1' for r in rows),'ativos':sum(str(r.get('ativo_inativo'))=='1' for r in rows),'inativos':sum(str(r.get('ativo_inativo'))=='0' for r in rows),'servicos_operacionais':sum(r.get('selecionavel',False) for r in result),'vinculos_preservados':linked,'outros_itens':sum(not r.get('operacional',False) and not r.get('historical_only') for r in result),'precos_alterados':False}
@@ -64,7 +77,12 @@ class Sync:
  def __init__(self,db_factory,baseline,config):
   self.db=db_factory;self.baseline=baseline;self.config=config;self.running=False;self.error=None;self.stop_event=threading.Event();self.started=False
  def status(self):
-  with self.db() as con:state=snapshot(con) or {}
+  with self.db() as con:
+   state=snapshot(con) or {}
+   items=cached(con)
+   if items is not None:
+    state['servicos_operacionais']=sum(item.get('selecionavel',False) for item in items)
+    state['outros_itens']=sum(not item.get('operacional',False) and not item.get('historical_only') for item in items)
   return {**state,'configurado':has_access(),'em_execucao':self.running,'ultimo_erro':self.error or state.get('erro'),'automatico':has_access(),'frequencia':'Diariamente às 03:10 (horário de Brasília)','limite_tentativas_diarias':1}
  def synchronize(self,credentials=None,preloaded=None):
   if not LOCK.acquire(blocking=False):raise ValueError('Uma atualização de produtos já está em execução.')
